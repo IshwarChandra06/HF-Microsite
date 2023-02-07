@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+    <!-- <aside cc> -->
+ 
+      <!-- Sidebar -->
+            <div class="sidebar" id="sidebar" th:fragment="leftmenu">
+                <div class="sidebar-inner slimscroll">
+					<div id="sidebar-menu" class="sidebar-menu">
+						<ul>
+							<li class="menu-title"> 
+								<span>Organization</span>
+							</li>
+							<li id="organization_menu" sec:authorize="hasAuthority('organization_view')">
+								<a th:href="@{/organization}"><i class="la la-city"></i> <span> Organization</span></a>
+							</li>
+							<li id="department_menu" sec:authorize="hasAuthority('department_view')">
+								<a th:href="@{/department}"><i class="la la-building"></i><span>Department</span></a>
+							</li>
+              				<li id="designation_menu" sec:authorize="hasAuthority('designation_view')">
+              					<a th:href="@{/designation}"><i class="la la-user-shield"></i><span>Designation</span></a>
+              				</li>
+							<li class="menu-title" sec:authorize="hasAuthority('employee_view')"> 
+								<span>Personnel</span>
+							</li>
+							<li id="employee_menu" sec:authorize="hasAuthority('employee_view')">
+								<a class="" th:href="@{/employee}"><i class="la la-user"></i><span>Employee</span></a>
+							</li>
+							<li class="menu-title" sec:authorize="hasAuthority('device_view')"> 
+								<span>Authorization</span>
+							</li>
+							<li id="device_menu" sec:authorize="hasAuthority('device_view')">
+								<a class="" th:href="@{/device}"><i class="la la-video"></i><span>Device</span></a>
+							</li>
+							<li class="menu-title" sec:authorize="hasAuthority('transaction_view')"> 
+								<span>Reports</span>
+							</li>
+							    <li id="even-report_menu" sec:authorize="hasAuthority('transaction_view')"><a href="/transaction"><i class="las la-file-upload"></i><span> Event Report</span></a></li>
+<!-- 								 <li id="unenrolled_menu" sec:authorize="hasAuthority('transaction_view')"><a class="" th:href="@{/unenrolled-employee}"><i class="las la-file-signature"></i><span>Unenrolled Logs</span></a></li> -->
+<!-- 								<li id="unregistered_menu" sec:authorize="hasAuthority('transaction_view')"><a class="" th:href="@{/unregistered-logs}"><i class="las la-file-excel"></i><span>Unregistered Logs</span></a> -->
+								<li id="daily-report_menu" sec:authorize="hasAuthority('dailyreport_view')"><a href="/daily-reports"><i class="las la-file-alt"></i><span> Daily Report</span> </a></li>
+								<li id="monthly_menu" sec:authorize="hasAuthority('monthlyattendance_view')"><a href="/monthly-attendance/report"><i class="las la-calendar"></i><span> Monthly Attendance</span> </a></li>
+							
+							<li class="menu-title" sec:authorize="hasAuthority('user_view')"> 
+								<span>Administration</span>
+							</li>
+							<li id="user_menu" sec:authorize="hasAuthority('user_view')"> 
+								<a href="/user"><i class="la la-user-plus"></i> <span>Users</span></a>
+							</li>
+							<li id="role_menu" sec:authorize="hasAuthority('role_view')">
+								<a href="/role"><i class="las la-user-cog"></i> <span>Role</span></a>
+							</li>
+							<li id="privilege_menu" sec:authorize="hasAuthority('privilege_view')">
+								<a href="/privilege"><i class="las la-user-shield"></i> <span>Privilege</span></a>
+							</li>
+							
+						</ul>
+					</div>
+                </div>
+            </div>
+			<!-- /Sidebar -->
+     
+          
+   <!--  </aside> -->
+  </html> 
+    

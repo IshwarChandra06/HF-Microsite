@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style type="text/css">
+    	.login,
+.image {
+  min-height: 100vh;
+}
+
+.bg-image {
+  background-image: url('https://res.cloudinary.com/mhmd/image/upload/v1555917661/art-colorful-contemporary-2047905_dxtao7.jpg');
+  background-size: cover;
+  background-position: center center;
+}
+    </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <title>MATA</title>
+</head>
+<body>
+<!-- <h3 style="text-align:center;">Sign in with Microsoft account</h3> -->
+<!-- <form style="text-align:center;" action="/msal4jsample/secure/aad">
+    <input type="submit" value="Sign In with Microsoft account" class="btn btn-primary">
+</form> -->
+
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <!-- The image half -->
+        <div class="col-md-6 d-none d-md-flex bg-image"></div>
+
+
+        <!-- The content half -->
+        <div class="col-md-6 bg-light">
+            <div class="login d-flex align-items-center py-5">
+
+                <!-- Demo content-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 col-xl-7 mx-auto" style="text-align: center;">
+                            <h3 class="display-5" style="text-align: center;">TQ Digi’lytics</h3>
+                            <br>
+                            <img alt="Tata" src="/assets/img/tqcertlogo.png" style="height:195px;">
+                            <p class="text-muted mb-4"></p>
+                            <form style="text-align:center;" method="POST" th:action="@{/login}">
+                                <div class="form-group mb-3">
+                                    <input id="username" name="username" type="text" placeholder="Username" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <input id="password" name="password" type="password" placeholder="Password" required="" class="form-control rounded-pill border-0 shadow-sm px-4 text-primary">
+                                </div>
+                                <!-- <div class="custom-control custom-checkbox mb-3">
+                                    <input id="customCheck1" type="checkbox" checked class="custom-control-input">
+                                    <label for="customCheck1" class="custom-control-label">Remember password</label>
+                                </div> -->
+                                <div>
+                                	<span class="has-error" th:text="${error}"></span>
+
+            						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign In</button>
+                                <!-- <div class="text-center d-flex justify-content-between mt-4"><p>Snippet by <a href="https://bootstrapious.com/snippets" class="font-italic text-muted"> 
+                                        <u>Boostrapious</u></a></p></div> -->
+                                        
+									<div th:if="${param.error}" class="alert alert-danger alert-dismissable rounded-pill">
+										<p class='text-center'>
+											<i class="icon fa fa-ban"></i> 
+											<span>Invalid Email Id Or Password.</span>
+										</p>
+									</div>
+									<div th:if="${param.logout}" class="alert alert-info alert-dismissable  rounded-pill">
+										<p class='text-center'>
+											<i class="icon fa fa-info"></i> 
+											<span>You have been logged out.</span>
+										</p>
+									</div>
+									<div th:if="${msg!=null}" class="alert alert-warning alert-dismissable rounded-pill">
+										<p class='text-center'>
+											<i class="icon fa fa-warning"></i> 
+											<span th:text="${msg}"></span>
+										</p>
+									</div>
+                            </form>
+                            <br/>
+                            <img alt="MATA" src="/assets/img/matalogo.png">
+                        </div>
+                    </div>
+                </div><!-- End -->
+
+            </div>
+        </div><!-- End -->
+
+    </div>
+</div>
+
+
+</body>
+</html>
