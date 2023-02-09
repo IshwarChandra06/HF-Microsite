@@ -31,6 +31,7 @@ import com.eikona.tech.constants.HeaderConstants;
 import com.eikona.tech.constants.NumberConstants;
 import com.eikona.tech.entity.Employee;
 import com.eikona.tech.repository.EmployeeRepository;
+
 @Component
 public class ExportEmployee {
 	
@@ -58,8 +59,8 @@ public class ExportEmployee {
     	Specification<Employee> departmentSpec = generalSpecification.foreignKeyStringSpecification(department,EmployeeConstants.DEPARTMENT,EmployeeConstants.NAME); 
     	Specification<Employee>  designationSpec = generalSpecification.foreignKeyStringSpecification(designation,EmployeeConstants.DESIGNATION,EmployeeConstants.NAME);
     	Specification<Employee> orgSpec = generalSpecification.foreignKeyStringSpecification(orgName, AreaConstants.ORGANIZATION,EmployeeConstants.NAME);
-		
-    	List<Employee> employeeList =employeeRepository.findAll(idSpec.and(employeeNameSpec)
+    	Specification<Employee> isDeletedFalse = generalSpecification.isDeletedSpecification();
+    	List<Employee> employeeList =employeeRepository.findAll(idSpec.and(employeeNameSpec).and(isDeletedFalse)
 				.and(employeeIdSpec).and(departmentSpec).and(designationSpec).and(orgSpec));
 		return employeeList;
 	}

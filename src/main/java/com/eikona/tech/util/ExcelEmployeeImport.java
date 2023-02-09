@@ -153,19 +153,28 @@ public class ExcelEmployeeImport {
 			employeeObj.setDepartment(department);
 		}
 	}
+	
 	private void setJoinDate(Employee employee,Cell currentCell) throws ParseException {
-		SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat inputFormat24 = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date date =null;
 		 if (currentCell.getCellType() == CellType.STRING) {
-			 date=inputFormat24.parse(currentCell.getStringCellValue().trim());
+			 date=inputFormat.parse(currentCell.getStringCellValue().trim());
 			 if(null!=date)
-			 employee.setJoinDate(outputFormat.format(date));
+			 employee.setJoinDate(dateFormat.format(date));
 		 }
-		 else {
-			 date = (Date)currentCell.getDateCellValue();
-			 if(null!=date)
-			 employee.setJoinDate(outputFormat.format(date));
+		  else if (currentCell.getCellType() == CellType.NUMERIC) {
+			  date = currentCell.getDateCellValue();
+	           String dateStr = dateFormat.format(date);
+	           employee.setJoinDate(dateStr);
+			} 
+		  else {
+			  if(!currentCell.getStringCellValue().isEmpty()) {
+				  date = (Date)currentCell.getDateCellValue();
+					 if(null!=date)
+					 employee.setJoinDate(dateFormat.format(date));
+			  }
+			
 		 }
 	}
 
