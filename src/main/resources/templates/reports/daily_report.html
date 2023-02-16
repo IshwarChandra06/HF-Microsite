@@ -232,19 +232,23 @@
 		});
 		
 		
-		function uncheckedRemove(){
-			var matches = document.querySelectorAll('input[type="checkbox"]:not(:checked)');
-			for(var i=0; i< matches.length; i++) {
-				 var oldInput = document.getElementById(matches[i].value);
-				 if(oldInput != null){
-					  if(matches[i].value=="date"){
-					 	document.getElementById('startDate').remove();
-					 	document.getElementById('endDate').remove();
-					 }else
-					 	oldInput.remove();
-				 }
-     	    }
-		}
+			function uncheckedRemove(){
+				var matches = document.querySelectorAll('input[type="checkbox"]:not(:checked)');
+				for(var i=0; i< matches.length; i++) {
+					
+					if(matches[i].value == "date"){
+						var oldInput = document.getElementById("startDate");
+						if(oldInput != null){
+							document.getElementById('startDate').remove();
+						 	document.getElementById('endDate').remove();
+						}
+					}else{
+						var oldInput = document.getElementById(matches[i].value);
+						 if(oldInput != null)
+							 oldInput.remove();
+					}
+	     	    }
+			}
 		
 		function uncheckedAppend(){
 			var matches = document.querySelectorAll('input[type="checkbox"]:not(:checked)');
@@ -412,7 +416,7 @@
 	               		var pageno = pagenoData(result, pageFlag);
 	               		
 	               		if("sortBySearchField" == headFlag && showExport){
-	               			$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn btn-primary export-data-by-search"><i class="las la-download"></i> Export to Excel</button>');
+	               			$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn export-data-by-search"><i class="las la-download"></i> Export To Excel</button>');
 	               		}
 	               		
 						$("#table-header").html('').append(table_header);			
@@ -702,7 +706,8 @@
 				uncheckedRemove();
                 
                 if("excel" == type){
-                	exportData(id,sDate,eDate,employeeName,employeeId,designation,department,status,shift,"xlsx");
+                	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
+                	exportData(id,sDate,eDate,employeeName,employeeId,designation,department,status,shift,"export-data-by-search","xlsx");
                 }
 			})
 			
@@ -711,11 +716,12 @@
 				var type = $(this).val();
                 
                 if("excel" == type){
-                	exportData(null,"","","","","","","","","xlsx");
+                	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
+                	exportData(null,"","","","","","","","","export-data","xlsx");
                 }
 			})
 			
-			function  exportData(id,sDate,eDate,employeeName,employeeId,designation,department,status,shift,flag) {
+			function  exportData(id,sDate,eDate,employeeName,employeeId,designation,department,status,shift,excelButtonClass,flag) {
                 var data = {
 					"id":id,
             		"sDate" : sDate,
@@ -763,6 +769,7 @@
 	                        a[0].click();
 	                        $("body").remove(a);
 	                    }
+	                    $("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn '+excelButtonClass+'"><i class="las la-download"></i> Export To Excel </button>'); 
 	                }
             })
 		}

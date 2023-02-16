@@ -239,12 +239,13 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 							LocalTime empIn = LocalTime.parse(dailyReport.getEmpInTime());
 							LocalTime empOut = LocalTime.parse(dailyReport.getEmpOutTime());
 	
-							Long shiftMinutes = shiftIn.until(shiftOut, ChronoUnit.MINUTES);
+                            Long shiftMinutes = shiftIn.until(shiftOut, ChronoUnit.MINUTES);
+							
+							if("3rd Shift".equalsIgnoreCase(dailyReport.getShift()))
+								shiftMinutes =480l;
 	
 							Long workHours = empIn.until(empOut, ChronoUnit.HOURS);
 							Long workMinutes = empIn.until(empOut, ChronoUnit.MINUTES);
-							
-							workMinutes = workMinutes % 60;
 							
 							if(workHours<0) {
 								workHours = 24 + workHours;
@@ -253,15 +254,34 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 							
 	
 							dailyReport.setWorkTime(String.valueOf(workHours) + ":" + String.valueOf(workMinutes % 60));
+							
+							if("3rd Shift".equalsIgnoreCase(dailyReport.getShift()) && workHours>2) {
+								Long tillMidNight=empIn.until(LocalTime.parse("23:59:59"), ChronoUnit.MINUTES);
+								Long afterMidNight=LocalTime.parse("00:00:00").until(empOut, ChronoUnit.MINUTES);
+								workMinutes =tillMidNight+afterMidNight;
+								dailyReport.setWorkTime(String.valueOf(workMinutes/60) + ":" + String.valueOf(workMinutes % 60));
+							}
+//							workMinutes = workMinutes % 60;
+							
+							
 	
 							Long overTime = workMinutes - shiftMinutes;
+							Long earlyGoing =0l;
+							Long lateGoing =0l;
+							if("3rd Shift".equalsIgnoreCase(dailyReport.getShift()) && workHours<2) {
+								 earlyGoing = empOut.until(LocalTime.parse("23:59:59"), ChronoUnit.MINUTES)+360l;
+							}else {
+								 lateGoing = shiftOut.until(empOut, ChronoUnit.MINUTES);
+								 earlyGoing = empOut.until(shiftOut, ChronoUnit.MINUTES);
+							}
 	
-							Long lateGoing = shiftOut.until(empOut, ChronoUnit.MINUTES);
-							Long earlyGoing = empOut.until(shiftOut, ChronoUnit.MINUTES);
+							
 	
 							
 							if (lateGoing > 0)
 								dailyReport.setLateGoing(lateGoing);
+							else
+								dailyReport.setLateGoing(null);
 	
 							if (earlyGoing > 0) {
 								dailyReport.setEarlyGoing(earlyGoing);

@@ -52,12 +52,12 @@
 					<div class="row align-items-center">
 						<div class="col">
 							<h3 class="page-heaer">
-								<i class="las la-calendar"> Monthly Report</i>
+								<i class="las la-calendar-check"> In & Out Monthly Report</i>
 							</h3>
 							<br>
 							<ul class="breadcrumb">
 								<li class="breadcrumb-item">Reports</li>
-								<li class="breadcrumb-item active"><i class="las la-calendar"></i> Monthly Report</li>
+								<li class="breadcrumb-item active"><i class="las la-calendar-check"></i> In & Out Monthly Report</li>
 							</ul>
 						</div>
 						<div class="col"> 
@@ -139,7 +139,7 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("#monthly_menu").addClass("active");
+			$("#inout_monthly_menu").addClass("active");
 			var showExport = $("#span_export").length>0;
 			
 			$(function(){
@@ -310,7 +310,7 @@
 	            }; 
 	         	
 	            $.ajax({
-	                url: '/api/search/monthly-attendance-report',
+	                url: '/api/search/in-out/monthly-attendance-report',
 	                type: 'GET',
 	               	data: data,
 	               	success: function (result) {
@@ -358,9 +358,11 @@
 						'<td>' + ((null != customer.grade)?customer.grade:'')+ '</td>' +
 						'<td>' + ((null != customer.mobile)?customer.mobile:'')+ '</td>' ;
 		       			var data_list ='';
-				        $.each(customer.dateList, function(i, customer){
-				       		data_list +='<td>' + customer+'</td>'
-				       	});
+				       for(var i=0; i<customer.dateList.length; i++){
+							   data_list +='<td>' + customer.inTimeList[i]+'</td>'
+							   +'<td>' + customer.outTimeList[i]+'</td>'
+							   +'<td>' + customer.dateList[i]+'</td>';
+						 }
 				        table_data +=data_list;
 				        table_data += '<td>' + customer.totalPresentCount+'</td>' +
 		               	 '<td>' + customer.totalOverTime+'</td>' ;
@@ -554,7 +556,7 @@
 	                }; 
 	    	            
 	           	$.ajax({
-	            	url: '/api/monthly/attendance/export-to-file',
+	            	url: '/api/in-out/monthly-attendance/export-to-file',
 	            	type: 'GET',
 	        		data: data,
 	           		xhr: function () {
@@ -581,7 +583,7 @@
 	                    	var url = window.URL || window.webkitURL;
 	                    	link = url.createObjectURL(blob);
 	                    	var a = $("<a />");
-	                    	a.attr("download", "Monthly_Attendence_Report_"+currentDate+".xlsx");
+	                    	a.attr("download", "In_&_Out_Monthly_Attendence_Report_"+currentDate+".xlsx");
 	                    	a.attr("href", link);
 	                    	$("body").append(a);
 	                    	a[0].click();

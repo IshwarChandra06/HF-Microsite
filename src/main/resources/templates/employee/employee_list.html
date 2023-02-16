@@ -321,7 +321,7 @@
 	               		var table_data = tableData(result);
 	               		var pageno = pagenoData(result, pageFlag);
 	               		if("sortBySearchField" == headFlag && showExport){
-	               			$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn btn-primary export-data-by-search"><i class="las la-download"></i> Export to Excel</button>');
+	               			$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn export-data-by-search"><i class="las la-download"></i> Export To Excel</button>');
 	               		}
 						$("#table-header").html('').append(table_header);			
 						$("tbody#table-body").html('').append(table_data);
@@ -620,7 +620,8 @@
 	            var department = document.getElementById('department').value;
 	            uncheckedRemove();
                 if("excel" == type){
-                	exportData(id,employeeName,employeeId,department,designation,"xlsx");
+                	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
+                	exportData(id,employeeName,employeeId,department,designation,"export-data-by-search","xlsx");
                 }
 			})
 			
@@ -629,11 +630,12 @@
 				var type = $(this).val();
                 
                 if("excel" == type){
-                	exportData(null,"","","","","xlsx");
+                	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
+                	exportData(null,"","","","","export-data","xlsx");
                 }
 			})
 			
-			function  exportData(id,name,empId,department,designation,flag) {
+			function  exportData(id,name,empId,department,designation,excelButtonClass,flag) {
                 var data = {
 					"id":id,
                		"name" : name,
@@ -677,6 +679,7 @@
 	                        a[0].click();
 	                        $("body").remove(a);
 	                    }
+	                    $("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn '+excelButtonClass+'"><i class="las la-download"></i> Export To Excel </button>'); 
 	                }
             })
 		}

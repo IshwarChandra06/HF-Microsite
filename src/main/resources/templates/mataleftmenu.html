@@ -39,8 +39,8 @@
 <!-- 								 <li id="unenrolled_menu" sec:authorize="hasAuthority('transaction_view')"><a class="" th:href="@{/unenrolled-employee}"><i class="las la-file-signature"></i><span>Unenrolled Logs</span></a></li> -->
 <!-- 								<li id="unregistered_menu" sec:authorize="hasAuthority('transaction_view')"><a class="" th:href="@{/unregistered-logs}"><i class="las la-file-excel"></i><span>Unregistered Logs</span></a> -->
 								<li id="daily-report_menu" sec:authorize="hasAuthority('dailyreport_view')"><a href="/daily-reports"><i class="las la-file-alt"></i><span> Daily Report</span> </a></li>
-								<li id="monthly_menu" sec:authorize="hasAuthority('monthlyattendance_view')"><a href="/monthly-attendance/report"><i class="las la-calendar"></i><span> Monthly Attendance</span> </a></li>
-							
+								<li id="monthly_menu" sec:authorize="hasAuthority('monthlyattendance_view')"><a href="/monthly-attendance/report"><i class="las la-calendar"></i><span> Monthly Report</span> </a></li>
+							<li id="inout_monthly_menu" sec:authorize="hasAuthority('monthlyattendance_view')"><a href="/in-out/monthly-attendance/report"><i class="las la-calendar-check"></i><span> In & Out Monthly Report</span> </a></li>
 							<li class="menu-title" sec:authorize="hasAuthority('user_view')"> 
 								<span>Administration</span>
 							</li>

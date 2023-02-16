@@ -223,19 +223,23 @@
 		});
 		
 		
-		function uncheckedRemove(){
-			var matches = document.querySelectorAll('input[type="checkbox"]:not(:checked)');
-			for(var i=0; i< matches.length; i++) {
-				 var oldInput = document.getElementById(matches[i].value);
-				 if(oldInput != null){
-					  if(matches[i].value=="date"){
-					 	document.getElementById('startDate').remove();
-					 	document.getElementById('endDate').remove();
-					 }else
-					 	oldInput.remove();
-				 }
-     	    }
-		}
+			function uncheckedRemove(){
+				var matches = document.querySelectorAll('input[type="checkbox"]:not(:checked)');
+				for(var i=0; i< matches.length; i++) {
+					
+					if(matches[i].value == "date"){
+						var oldInput = document.getElementById("startDate");
+						if(oldInput != null){
+							document.getElementById('startDate').remove();
+						 	document.getElementById('endDate').remove();
+						}
+					}else{
+						var oldInput = document.getElementById(matches[i].value);
+						 if(oldInput != null)
+							 oldInput.remove();
+					}
+	     	    }
+			}
 		
 		function uncheckedAppend(){
 			var matches = document.querySelectorAll('input[type="checkbox"]:not(:checked)');

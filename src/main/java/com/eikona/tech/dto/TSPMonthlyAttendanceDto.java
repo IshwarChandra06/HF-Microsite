@@ -16,6 +16,25 @@ public class TSPMonthlyAttendanceDto {
 	private String totalDays;
 
 	private List<String> dateList;
+	
+	private List<String> inTimeList;
+	private List<String> outTimeList;
+
+	public List<String> getInTimeList() {
+		return inTimeList;
+	}
+
+	public void setInTimeList(List<String> inTimeList) {
+		this.inTimeList = inTimeList;
+	}
+
+	public List<String> getOutTimeList() {
+		return outTimeList;
+	}
+
+	public void setOutTimeList(List<String> outTimeList) {
+		this.outTimeList = outTimeList;
+	}
 
 	public String getEmpId() {
 		return empId;
