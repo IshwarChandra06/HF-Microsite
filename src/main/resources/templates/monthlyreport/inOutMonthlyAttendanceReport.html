@@ -359,9 +359,9 @@
 						'<td>' + ((null != customer.mobile)?customer.mobile:'')+ '</td>' ;
 		       			var data_list ='';
 				       for(var i=0; i<customer.dateList.length; i++){
-							   data_list +='<td>' + customer.inTimeList[i]+'</td>'
-							   +'<td>' + customer.outTimeList[i]+'</td>'
-							   +'<td>' + customer.dateList[i]+'</td>';
+				    	   data_list +='<td>' + ((null != customer.inTimeList[i])?customer.inTimeList[i]:'-')+ '</td>' +
+				    	   '<td>' + ((null != customer.outTimeList[i])?customer.outTimeList[i]:'-')+ '</td>' +
+						   '<td>' + customer.dateList[i]+'</td>';
 						 }
 				        table_data +=data_list;
 				        table_data += '<td>' + customer.totalPresentCount+'</td>' +
