@@ -9,7 +9,7 @@ public interface DailyAttendanceService {
     
 	List<DailyReport> generateDailyAttendance(String sDate, String eDate, String orgName);
 
-	PaginationDto<DailyReport> searchByField(Long id, String sDate, String eDate, String employeeId, String employeeName,
+	PaginationDto<DailyReport> searchByField(String sDate, String eDate, String employeeId, String employeeName,
 			 String department, String designation,String status, String shift, int pageno, String sortField, String sortDir, String orgName);
 
 	List<DailyReport> getAllDailyReport();

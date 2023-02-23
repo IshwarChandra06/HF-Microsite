@@ -41,26 +41,26 @@ public class ExportEmployee {
 	@Autowired
 	private EmployeeRepository employeeRepository;
 
-	public void fileExportBySearchValue(HttpServletResponse response, Long id, String name, String empId,
-			 String department, String designation, String flag, String orgName) throws ParseException, IOException {
+	public void fileExportBySearchValue(HttpServletResponse response,String name, String empId,
+			 String department, String designation,String grade, String flag, String orgName) throws ParseException, IOException {
 		
-		List<Employee> employeeList = getListOfEmployee(id, name, empId, designation,
-				department, orgName);
+		List<Employee> employeeList = getListOfEmployee(name, empId, designation,
+				department, orgName,grade);
 		
 		excelGenerator(response, employeeList);
 		
 	}
 
-	private List<Employee> getListOfEmployee(Long id, String name, String empId, String designation, String department,
-			String orgName) {
-		Specification<Employee> idSpec = generalSpecification.longSpecification(id, ApplicationConstants.ID);
+	private List<Employee> getListOfEmployee(String name, String empId, String designation, String department,
+			String orgName, String grade) {
 		Specification<Employee> employeeNameSpec = generalSpecification.stringSpecification(name,EmployeeConstants.NAME);
 		Specification<Employee> employeeIdSpec = generalSpecification.stringSpecification(empId,EmployeeConstants.EMPID);
     	Specification<Employee> departmentSpec = generalSpecification.foreignKeyStringSpecification(department,EmployeeConstants.DEPARTMENT,EmployeeConstants.NAME); 
     	Specification<Employee>  designationSpec = generalSpecification.foreignKeyStringSpecification(designation,EmployeeConstants.DESIGNATION,EmployeeConstants.NAME);
     	Specification<Employee> orgSpec = generalSpecification.foreignKeyStringSpecification(orgName, AreaConstants.ORGANIZATION,EmployeeConstants.NAME);
     	Specification<Employee> isDeletedFalse = generalSpecification.isDeletedSpecification();
-    	List<Employee> employeeList =employeeRepository.findAll(idSpec.and(employeeNameSpec).and(isDeletedFalse)
+    	Specification<Employee> gradeSpc = generalSpecification.stringSpecification(grade, EmployeeConstants.GRADE);
+    	List<Employee> employeeList =employeeRepository.findAll(employeeNameSpec.and(isDeletedFalse).and(gradeSpc)
 				.and(employeeIdSpec).and(departmentSpec).and(designationSpec).and(orgSpec));
 		return employeeList;
 	}
@@ -119,10 +119,6 @@ public class ExportEmployee {
 			int columnCount = NumberConstants.ZERO;
 
 			Cell cell = row.createCell(columnCount++);
-			cell.setCellValue(employee.getId());
-			cell.setCellStyle(cellStyle);
-
-			cell = row.createCell(columnCount++);
 			cell.setCellValue(employee.getName());
 			cell.setCellStyle(cellStyle);
 
@@ -180,10 +176,6 @@ public class ExportEmployee {
 	private void setHeaderForExcel(Row row, CellStyle cellStyle) {
 		int columnCount = NumberConstants.ZERO;
 		Cell cell = row.createCell(columnCount++);
-		cell.setCellValue(HeaderConstants.ID);
-		cell.setCellStyle(cellStyle);
-
-		cell = row.createCell(columnCount++);
 		cell.setCellValue(HeaderConstants.NAME);
 		cell.setCellStyle(cellStyle);
 

@@ -39,7 +39,7 @@ public interface EmployeeService {
 	 */
 	void deleteById(long id, Principal principal);
 	
-	PaginationDto<Employee> searchByField(Long id, String name, String empId, String department, String designation,
+	PaginationDto<Employee> searchByField(String name, String empId, String department, String designation,
 			String grade, int pageno, String sortField, String sortDir, String orgname);
 	String deleteEmployeeList(MultipartFile file);
 

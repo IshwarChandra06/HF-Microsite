@@ -93,7 +93,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 	
 	@Override
-	public PaginationDto<Employee> searchByField(Long id, String name, String empId,  String department,
+	public PaginationDto<Employee> searchByField(String name, String empId,  String department,
 			String designation,String grade, int pageno, String sortField, String sortDir, String organization) {
 
 		if (null == sortDir || sortDir.isEmpty()) {
@@ -102,7 +102,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		if (null == sortField || sortField.isEmpty()) {
 			sortField = ApplicationConstants.ID;
 		}
-		Page<Employee> page = getEmployeePage(id, name, empId, department, designation,grade, pageno, sortField,
+		Page<Employee> page = getEmployeePage(name, empId, department, designation,grade, pageno, sortField,
 				sortDir, organization);
         List<Employee> employeeList =  page.getContent();
         List<Employee> employeeWithImgList = new ArrayList<Employee>();
@@ -118,7 +118,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return dtoList;
 	}
 
-	private Page<Employee> getEmployeePage(Long id, String name, String empId, String department,
+	private Page<Employee> getEmployeePage(String name, String empId, String department,
 			String designation, String grade, int pageno, String sortField, String sortDir, String orgName) {
 		
 		Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
@@ -126,7 +126,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		Pageable pageable = PageRequest.of(pageno - NumberConstants.ONE, NumberConstants.TEN, sort);
 		Specification<Employee> isDeletedFalse = generalSpecificationEmployee.isDeletedSpecification();
-		Specification<Employee> idSpc = generalSpecificationEmployee.longSpecification(id, ApplicationConstants.ID);
 		Specification<Employee> nameSpc = generalSpecificationEmployee.stringSpecification(name, ApplicationConstants.NAME);
 		Specification<Employee> empIdSpc = generalSpecificationEmployee.stringSpecification(empId, EmployeeConstants.EMPID);
 		Specification<Employee> gradeSpc = generalSpecificationEmployee.stringSpecification(grade, EmployeeConstants.GRADE);
@@ -135,7 +134,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		
 		Specification<Employee> orgSpc = generalSpecificationEmployee.foreignKeyStringSpecification(orgName, AreaConstants.ORGANIZATION, ApplicationConstants.NAME);
 		
-    	Page<Employee> page = employeeRepository.findAll(idSpc.and(nameSpc).and(empIdSpc).and(deptSpec).and(designationSpc).and(isDeletedFalse).and(gradeSpc).and(orgSpc), pageable);
+    	Page<Employee> page = employeeRepository.findAll(nameSpc.and(empIdSpc).and(deptSpec).and(designationSpc).and(isDeletedFalse).and(gradeSpc).and(orgSpc), pageable);
 		return page;
 	}
 	@Override

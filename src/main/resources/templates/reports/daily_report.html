@@ -67,7 +67,7 @@
 							<a th:href="@{/generate/daily-attendance/shift}" class="btn add-btn"><i class="las la-calculator"></i> Generate Shift Wise</a>
 						</div> -->
 						<div class="col-auto float-right ml-auto"  id="excel-button" sec:authorize="hasAuthority('dailyreport_export')">
-							<button  value ="excel" type="button" class="btn add-btn export-data"><i class="las la-download"></i> Export to Excel</button>
+							<button  value ="excel" type="button" class="btn add-btn export-data"><i class="las la-download"></i> Export To Excel</button>
 						</div>
 					</div>
 				</div>
@@ -79,7 +79,6 @@
 						<div class="form-group form-focus select-focus">
 						 	<label ><b>Add Filter:</b></label>
 					        <select id="people" name="people" multiple>
-								<option value="id" >Id</option>
 								<option value="date" >Date</option>
 								<option value="employeeId" >Employee Id</option>
 								<option value="employeeName" >Employee Name</option>
@@ -94,7 +93,6 @@
 					<div class="col-sm-6 col-md-1" id="hide-search" style="display: none;"></div>
 				</div>
 				<div style="display:none">
-					<input type="hidden" id="orginalById">
 					<input type="hidden" id="orginalByStartDate">
 					<input type="hidden" id="orginalByEndDate">
 					<input type="hidden" id="orginalByEmployeeId">
@@ -267,7 +265,6 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('orginalById').value;
                 var employeeId= document.getElementById('orginalByEmployeeId').value;
                 var employeeName = document.getElementById('orginalByEmployeeName').value;
                 var department = document.getElementById('orginalByDepartment').value;
@@ -276,13 +273,12 @@
                 var shift = document.getElementById('orginalByShift').value;
                 var sDate = "";
 				
-				ajaxCall(id, sDate, sDate, employeeId, employeeName, department, designation,status, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(sDate, sDate, employeeId, employeeName, department, designation,status,shift, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
 				
         	})
         	//end sort 
         	
         	$(function(){
-        		var id = document.getElementById('orginalById').value;
                 var employeeId= document.getElementById('orginalByEmployeeId').value;
                 var employeeName = document.getElementById('orginalByEmployeeName').value;
                 var department = document.getElementById('orginalByDepartment').value;
@@ -293,14 +289,13 @@
                 var status = document.getElementById('orginalByStatus').value;
                 var shift = document.getElementById('orginalByShift').value;
 				
-				ajaxCall(id, sDate, sDate, employeeId, employeeName, department, designation,status,shift, "sortByField", "previousPage", 1,"id","desc");
+				ajaxCall(sDate, sDate, employeeId, employeeName, department, designation,status,shift, "sortByField", "previousPage", 1,"id","desc");
         	})
         	
 			$(document).on('click', '.previousPage', function(e) {
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('orginalById').value;
                 var employeeId= document.getElementById('orginalByEmployeeId').value;
                 var employeeName = document.getElementById('orginalByEmployeeName').value;
                 var department = document.getElementById('orginalByDepartment').value;
@@ -309,7 +304,7 @@
  				var shift = document.getElementById('orginalByShift').value;
  				 var sDate = "";//new Date().toISOString().slice(0, 10);
 				
-				ajaxCall(id, sDate, sDate, employeeId, employeeName, department, designation,status,shift, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(sDate, sDate, employeeId, employeeName, department, designation,status,shift, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
         	})
 			
 			//start search and sort field
@@ -318,7 +313,6 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('id').value;
 				var sDate = document.getElementById('startDate').value;
 	            var eDate = document.getElementById('endDate').value;
                 var employeeId= document.getElementById('employeeId').value;
@@ -329,7 +323,7 @@
 				var shift = document.getElementById('shift').value;
 				checkDate();
 				uncheckedRemove();
-				ajaxCall(id, sDate, eDate, employeeId, employeeName, department, designation,status,shift, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(sDate, eDate, employeeId, employeeName, department, designation,status,shift, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
 				
         	})
         	//end search and sort field
@@ -339,7 +333,6 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('id').value;
 				var sDate = document.getElementById('startDate').value;
 	            var eDate = document.getElementById('endDate').value;
                 var employeeId= document.getElementById('employeeId').value;
@@ -350,13 +343,12 @@
 				var shift = document.getElementById('shift').value;
 				checkDate();
 				uncheckedRemove();
-				ajaxCall(id, sDate, eDate, employeeId, employeeName, department, designation,status,shift, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(sDate, eDate, employeeId, employeeName, department, designation,status,shift, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
         	})
 			
         	$(document).on('click', '.searchButtonField', function(e) {
         		uncheckedAppend();
         		
-        		var id = document.getElementById('id').value;
 				var sDate = document.getElementById('startDate').value;
 	            var eDate = document.getElementById('endDate').value;
                 var employeeId= document.getElementById('employeeId').value;
@@ -367,7 +359,7 @@
                 var shift = document.getElementById('shift').value;
                 checkDate();
                 uncheckedRemove();
-                ajaxCall(id, sDate, eDate, employeeId, employeeName,  department, designation,status,shift, "sortBySearchField", "nextPage", 1,"id","desc");
+                ajaxCall(sDate, eDate, employeeId, employeeName,  department, designation,status,shift, "sortBySearchField", "nextPage", 1,"id","desc");
         	})
         	
         	function checkDate() {
@@ -390,9 +382,8 @@
 				}
 		}
 	        	
-	        function ajaxCall(id, sDate, eDate, employeeId, employeeName,  department, designation,status,shift, headFlag, pageFlag, pageno, sortField,sortDir) {
+	        function ajaxCall(sDate, eDate, employeeId, employeeName,  department, designation,status,shift, headFlag, pageFlag, pageno, sortField,sortDir) {
 				var data = {
-	           		"id" : id,
 	           		"sDate":sDate,
 	           		"eDate":eDate,
 	           		"employeeId":employeeId,
@@ -433,7 +424,7 @@
 	        function tableHeader(result, flag) {
 				var table_header ='';
 				if(result.data.length == 0) {
-					table_header = '<th><b>Id</b></th>'+
+					table_header = 
 					'<td><b>Date</b></td>'+
 					'<td><b>Employee Id </b></td>'+
 					'<td><b>Employee Name</b></td>'+
@@ -460,8 +451,7 @@
 						
 						
 				}else {
-					table_header = '<th><button  value="'+result.page_number+'-id-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Id</b></button>'+
-		   			'</th><th>'+
+					table_header = '<th>'+
 		   				'<button  value="'+result.page_number+'-dateStr-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Date</b></button>'+
 		   			'</th><th>'+
 		   				'<button  value="'+result.page_number+'-empId-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Employee Id</b></button>'+
@@ -515,7 +505,7 @@
 			function tableData(result) {
 				var table_data ='';
            		$.each(result.data, function(i, customer) {
-           			table_data +='<tr><td>' + customer.id + '</td>' +
+           			table_data +='<tr>' +
 	           		'<td>' + customer.dateStr + '</td>' +
 	            	'<td>' + customer.empId + '</td>' +
 	            	'<td>'+ ((null != customer.employeeName)?customer.employeeName.toLocaleUpperCase():'')+'</td>'+
@@ -694,7 +684,6 @@
 			$(document).on('click', '.export-data-by-search', function(e) {
 				uncheckedAppend();
 				var type = $(this).val();
-				var id = document.getElementById('id').value;
 				var sDate = document.getElementById('startDate').value;
 	            var eDate = document.getElementById('endDate').value;
 	            var employeeName = document.getElementById('employeeName').value;
@@ -707,7 +696,7 @@
                 
                 if("excel" == type){
                 	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
-                	exportData(id,sDate,eDate,employeeName,employeeId,designation,department,status,shift,"export-data-by-search","xlsx");
+                	exportData(sDate,eDate,employeeName,employeeId,designation,department,status,shift,"export-data-by-search","xlsx");
                 }
 			})
 			
@@ -717,13 +706,12 @@
                 
                 if("excel" == type){
                 	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
-                	exportData(null,"","","","","","","","","export-data","xlsx");
+                	exportData("","","","","","","","","export-data","xlsx");
                 }
 			})
 			
-			function  exportData(id,sDate,eDate,employeeName,employeeId,designation,department,status,shift,excelButtonClass,flag) {
+			function  exportData(sDate,eDate,employeeName,employeeId,designation,department,status,shift,excelButtonClass,flag) {
                 var data = {
-					"id":id,
             		"sDate" : sDate,
                		"eDate" : eDate,
                		"employeeName" : employeeName,

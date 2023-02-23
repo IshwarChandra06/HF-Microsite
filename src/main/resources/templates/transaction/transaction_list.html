@@ -71,7 +71,6 @@
 						<div class="form-group form-focus select-focus">
 						 	<label ><b>Add Filter:</b></label>
 					        <select id="people" name="people" multiple>
-								<option value="id" >Id</option>
 								<option value="date" >Date</option>
 								<option value="employeeId" >Employee Id</option>
 								<option value="employeeName" >Employee Name</option>
@@ -89,7 +88,6 @@
 					<div class="col-sm-6 col-md-1" id="hide-search" style="display: none;"></div>
 				</div>
 				<div style="display:none">
-					<input type="hidden" id="orginalById">
 					<input type="hidden" id="orginalByStartDate">
 					<input type="hidden" id="orginalByEndDate">
 					<input type="hidden" id="orginalByEmployeeId">
@@ -258,7 +256,6 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('orginalById').value;
                 var employeeId= document.getElementById('orginalByEmployeeId').value;
                 var employeeName = document.getElementById('orginalByEmployeeName').value;
                 var device = document.getElementById('orginalByDevice').value;
@@ -267,7 +264,7 @@
 
                 var sDate = "";
                 
-				ajaxCall(id, sDate, sDate, employeeId,  employeeName, device, department, designation, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(sDate, sDate, employeeId,  employeeName, device, department, designation, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
 				
         	})
         	//end sort 
@@ -277,7 +274,6 @@
         	})
 			
 			function defautlSearch(){
-				var id = document.getElementById('orginalById').value;
                 var employeeId= document.getElementById('orginalByEmployeeId').value;
                 var employeeName = document.getElementById('orginalByEmployeeName').value;
                 var device = document.getElementById('orginalByDevice').value;
@@ -286,14 +282,13 @@
 				
                 var sDate = "";
                 
-				ajaxCall(id, sDate, sDate, employeeId, employeeName, device, department, designation, "sortByField", "previousPage", 1,"id","desc");
+				ajaxCall(sDate, sDate, employeeId, employeeName, device, department, designation, "sortByField", "previousPage", 1,"id","desc");
 			}
         	
 			$(document).on('click', '.previousPage', function(e) {
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('orginalById').value;
                 var employeeId= document.getElementById('orginalByEmployeeId').value;
                 var employeeName = document.getElementById('orginalByEmployeeName').value;
                 var device = document.getElementById('orginalByDevice').value;
@@ -302,7 +297,7 @@
                 
                 var sDate = "";
 				
-				ajaxCall(id, sDate, sDate, employeeId, employeeName, device, department, designation, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(sDate, sDate, employeeId, employeeName, device, department, designation, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
         	})
 			
 			//start search and sort field
@@ -311,7 +306,6 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('id').value;
 				var sDate = document.getElementById('startDate').value;
 	            var eDate = document.getElementById('endDate').value;
                 var employeeId= document.getElementById('employeeId').value;
@@ -321,7 +315,7 @@
                 var designation = document.getElementById('designation').value;
                 checkDate();
                 uncheckedRemove();
-                ajaxCall(id, sDate, eDate, employeeId, employeeName, device, department, designation, "sortBySearchField", "nextPage", valueList[0], valueList[1], valueList[2]);
+                ajaxCall(sDate, eDate, employeeId, employeeName, device, department, designation, "sortBySearchField", "nextPage", valueList[0], valueList[1], valueList[2]);
 				
         	})
         	//end search and sort field
@@ -331,7 +325,6 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('id').value;
 				var sDate = document.getElementById('startDate').value;
 	            var eDate = document.getElementById('endDate').value;
                 var employeeId= document.getElementById('employeeId').value;
@@ -341,7 +334,7 @@
                 var designation = document.getElementById('designation').value;
                 checkDate();
                 uncheckedRemove();
-                ajaxCall(id, sDate, eDate, employeeId, employeeName, device, department, designation, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
+                ajaxCall(sDate, eDate, employeeId, employeeName, device, department, designation, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
         	})
 			
         	$(document).on('click', '.searchButtonField', function(e) {
@@ -351,7 +344,6 @@
         			defautlSearch();
         		else{
         			uncheckedAppend();
-        			var id = document.getElementById('id').value;
 					var sDate = document.getElementById('startDate').value;
 		            var eDate = document.getElementById('endDate').value;
 	                var employeeId= document.getElementById('employeeId').value;
@@ -361,7 +353,7 @@
 	                var designation = document.getElementById('designation').value;
 	                checkDate();
 	                uncheckedRemove();
-	                ajaxCall(id, sDate, eDate, employeeId, employeeName, device, department, designation, "sortBySearchField", "nextPage", 1, "id", "desc");
+	                ajaxCall(sDate, eDate, employeeId, employeeName, device, department, designation, "sortBySearchField", "nextPage", 1, "id", "desc");
         		}
         	})
         	
@@ -385,11 +377,8 @@
 				}
 		}
 	        	
-	        function ajaxCall(id, sDate, eDate, employeeId,  employeeName, device, department, designation, headFlag, pageFlag, pageno, sortField,sortDir) {
-// 				var employee=($("#only-employee").is(":checked")?"Only Employee":"");
+	        function ajaxCall(sDate, eDate, employeeId,  employeeName, device, department, designation, headFlag, pageFlag, pageno, sortField,sortDir) {
 				var data = {
-// 					"employee":employee,
-	           		"id" : id,
 	           		"sDate":sDate,
 	           		"eDate":eDate,
 	           		"employeeId":employeeId,
@@ -425,7 +414,7 @@
 	        function tableHeader(result, flag) {
 				var table_header ='';
 				if(result.data.length == 0) {
-					table_header = '<th><b>Id</b></th>'+
+					table_header = 
 					'<td><b>Date</b></td>'+
 					'<td><b>Time</b></td>'+
 					'<td><b>Employee Id </b></td>'+
@@ -440,8 +429,7 @@
 						
 						
 				}else {
-					table_header = '<th><button  value="'+result.page_number+'-id-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Id</b></button>'+
-		   			'</th><th>'+
+					table_header = '<th>'+
 		   				'<button  value="'+result.page_number+'-punchDateStr-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Date</b></button>'+
 		   			'</th><th>'+		
 						'<button  value="'+result.page_number+'-punchTimeStr-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Time</b></button>'+	
@@ -470,7 +458,7 @@
 				console.warn(result);
 				var table_data ='';
            		$.each(result.data, function(i, customer) {
-           			table_data +='<tr><td>' + customer.id + '</td>' ;
+           			table_data +='<tr>' ;
                	   
            			if(null!=customer.punchDateStr){
            				table_data += '<td>' + customer.punchDateStr+ '</td>' ;

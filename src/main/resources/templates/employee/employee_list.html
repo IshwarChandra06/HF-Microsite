@@ -64,7 +64,7 @@
 							</div>
 							
 							<div class="col-auto float-right ml-auto"  id="excel-button" sec:authorize="hasAuthority('employee_export')">
-							<button  value ="excel" type="button" class="btn add-btn export-data"><i class="las la-download"></i> Export to Excel</button>
+							<button  value ="excel" type="button" class="btn add-btn export-data"><i class="las la-download"></i> Export To Excel</button>
 						</div>
 							
 							<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('employee_create')">
@@ -210,14 +210,13 @@
 			
 			
 			$(function(){
-        		var id = document.getElementById('orginalById').value;
 				var name= document.getElementById('orginalByName').value;
 				var empId= document.getElementById('orginalByEmpId').value;
 				var department= document.getElementById('orginalByDepartment').value;
 				var designation= document.getElementById('orginalByDesignation').value;
 				var grade= document.getElementById('orginalByGrade').value;
 				
-				ajaxCall(id, name,empId,department,designation,grade, "sortByField", "previousPage", 1,"id","desc");
+				ajaxCall(name,empId,department,designation,grade, "sortByField", "previousPage", 1,"id","desc");
         	})
         	
         	
@@ -226,7 +225,6 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('orginalById').value;
 				var name= document.getElementById('orginalByName').value;
 				var empId= document.getElementById('orginalByEmpId').value;
 				var department= document.getElementById('orginalByDepartment').value;
@@ -234,7 +232,7 @@
 				var designation= document.getElementById('orginalByDesignation').value;
 				var grade= document.getElementById('orginalByGrade').value;
 				
-				ajaxCall(id, name,empId,department,designation,grade, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(name,empId,department,designation,grade, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
 				
         	})
         	//end sort 
@@ -243,7 +241,6 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('orginalById').value;
 				var name= document.getElementById('orginalByName').value;
 				var empId= document.getElementById('orginalByEmpId').value;
 				var department= document.getElementById('orginalByDepartment').value;
@@ -251,7 +248,7 @@
 				var designation= document.getElementById('orginalByDesignation').value;
 				var grade= document.getElementById('orginalByGrade').value;
 				
-				ajaxCall(id, name,empId,department,designation,grade, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(name,empId,department,designation,grade, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
         	})
 			
 			//start search and sort field
@@ -260,14 +257,13 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('id').value;
 				var name = document.getElementById('name').value;
 				var empId = document.getElementById('empId').value;
 				var department = document.getElementById('department').value;
 				var designation = document.getElementById('designation').value;
 				var grade= document.getElementById('grade').value;
 				uncheckedRemove();
-				ajaxCall(id, name,empId,department,designation,grade, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(name,empId,department,designation,grade, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
 				
         	})
         	//end search and sort field
@@ -277,31 +273,28 @@
 				var value = $(this).val();
 				var valueList = value.split("-");
 				
-				var id = document.getElementById('id').value;
 				var name = document.getElementById('name').value;
 				var empId = document.getElementById('empId').value;
 				var department = document.getElementById('department').value;
 				var designation = document.getElementById('designation').value;
 				var grade= document.getElementById('grade').value;
 				uncheckedRemove();
-				ajaxCall(id, name,empId,department,designation,grade, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(name,empId,department,designation,grade, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
         	})
 			
         	$(document).on('click', '.searchButtonField', function(e) {
         		uncheckedAppend();
-        		var id = document.getElementById('id').value;
 				var name = document.getElementById('name').value;
 				var empId = document.getElementById('empId').value;
 				var department = document.getElementById('department').value;
 				var designation = document.getElementById('designation').value;
 				var grade= document.getElementById('grade').value;
 				uncheckedRemove();
-				ajaxCall(id, name,empId,department,designation,grade, "sortBySearchField", "nextPage", 1,"id","desc");
+				ajaxCall(name,empId,department,designation,grade, "sortBySearchField", "nextPage", 1,"id","desc");
         	})
 	        	
-	        function ajaxCall(id, name,empId,department,designation,grade, headFlag, pageFlag, pageno, sortField,sortDir) {
+	        function ajaxCall(name,empId,department,designation,grade, headFlag, pageFlag, pageno, sortField,sortDir) {
 				var data = {
-	           		"id" : id,
 	           		"name":name,
 	           		"empId":empId,
 	           		"department":department,
@@ -334,7 +327,7 @@
 			function tableHeader(result, flag) {
 				var table_header ='';
 				if(result.data.length == 0) {
-					table_header = '<th><b>Id</b></th>'+
+					table_header =
 						'<th><b>Name</b></th>'+
 						'<th><b>Emp Id</b></th>'+
 						'<th><b>Department</b></th>'+
@@ -351,8 +344,7 @@
 					if(showUpdate || showDelete)
 						table_header+='<th><b> Actions</b></th>';
 				}else {
-					table_header = '<th><button  value="'+result.page_number+'-id-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Id</b></button>'+
-		   			'</th><th>'+
+					table_header = '<th>'+
 		   			'<button  value="'+result.page_number+'-name-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Name</b></button>'+
 		   			'</th><th>'+		
 						'<button  value="'+result.page_number+'-empId-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Emp Id</b></button>'+	
@@ -386,8 +378,7 @@
 			function tableData(result) {
 				var table_data ='';
            		$.each(result.data, function(i, customer) {
-           			table_data +='<tr>' +
-               	 		'<td>' + customer.id + '</td>';
+           			table_data +='<tr>';
            			if(null != customer.name){
               	 		table_data += '<td>' + customer.name + '</td>';
               	 	} else{
@@ -613,15 +604,15 @@
 			$(document).on('click', '.export-data-by-search', function(e) {
 				uncheckedAppend();
 				var type = $(this).val();
-				var id = document.getElementById('id').value;
 	            var employeeName = document.getElementById('name').value;
 	            var employeeId = document.getElementById('empId').value;
 	            var designation = document.getElementById('designation').value;
 	            var department = document.getElementById('department').value;
+	            var grade = document.getElementById('grade').value;
 	            uncheckedRemove();
                 if("excel" == type){
                 	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
-                	exportData(id,employeeName,employeeId,department,designation,"export-data-by-search","xlsx");
+                	exportData(employeeName,employeeId,department,designation,grade,"export-data-by-search","xlsx");
                 }
 			})
 			
@@ -631,17 +622,17 @@
                 
                 if("excel" == type){
                 	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
-                	exportData(null,"","","","","export-data","xlsx");
+                	exportData("","","","","","export-data","xlsx");
                 }
 			})
 			
-			function  exportData(id,name,empId,department,designation,excelButtonClass,flag) {
+			function  exportData(name,empId,department,designation,grade,excelButtonClass,flag) {
                 var data = {
-					"id":id,
                		"name" : name,
                		"empId":empId,
                		"department":department,
                		"designation":designation,
+               		"grade":grade,
 	           		"flag":flag
                 }; 
     	            

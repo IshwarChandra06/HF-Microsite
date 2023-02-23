@@ -57,12 +57,12 @@ public class DailyReportController {
 	
 	@RequestMapping(value = "/api/search/daily-reports", method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('dailyreport_view')")
-	public @ResponseBody PaginationDto<DailyReport> search(Long id, String sDate,String eDate, String employeeId, String employeeName, String department, String designation,
+	public @ResponseBody PaginationDto<DailyReport> search(String sDate,String eDate, String employeeId, String employeeName, String department, String designation,
 			String status,String shift,int pageno, String sortField, String sortDir, Principal principal) {
 		
 		User userObj = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
 		String orgName = (null == userObj.getOrganization()? null : userObj.getOrganization().getName());
-		PaginationDto<DailyReport> dtoList = dailyAttendanceService.searchByField(id, sDate, eDate, employeeId, employeeName,  department, designation,status,shift ,pageno, sortField, sortDir, orgName);
+		PaginationDto<DailyReport> dtoList = dailyAttendanceService.searchByField(sDate, eDate, employeeId, employeeName,  department, designation,status,shift ,pageno, sortField, sortDir, orgName);
 		
 		return dtoList;
 	}
@@ -79,7 +79,7 @@ public class DailyReportController {
 	
 	@RequestMapping(value="/api/daily-attendance/export-to-file",method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('dailyreport_export')")
-	public void exportToFile(HttpServletResponse response, Long id, String sDate, String eDate, String employeeName,String employeeId, 
+	public void exportToFile(HttpServletResponse response,String sDate, String eDate, String employeeName,String employeeId, 
 			String designation, String department,String status,String shift, String flag, Principal principal) {
 		User userObj = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
 		String orgName = (null == userObj.getOrganization()? null : userObj.getOrganization().getName());
@@ -90,7 +90,7 @@ public class DailyReportController {
 			String headerValue = "attachment; filename=Daily_Report" + currentDateTime + "."+flag;
 			response.setHeader(headerKey, headerValue);
 		try {
-			exportDailyReports.fileExportBySearchValue(response, id, sDate, eDate, employeeName,employeeId, designation, department, status,shift, flag, orgName );
+			exportDailyReports.fileExportBySearchValue(response, sDate, eDate, employeeName,employeeId, designation, department, status,shift, flag, orgName );
 		} catch (Exception  e) {
 			e.printStackTrace();
 		}

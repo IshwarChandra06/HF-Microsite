@@ -196,12 +196,12 @@ public class TransactionController {
 	//search data
 	@RequestMapping(value = "/api/search/transaction", method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('transaction_view')")
-	public @ResponseBody PaginationDto<Transaction> search(Long id, String sDate,String eDate, String employeeId, String employeeName, String device, String department, String designation,
+	public @ResponseBody PaginationDto<Transaction> search( String sDate,String eDate, String employeeId, String employeeName, String device, String department, String designation,
 			int pageno, String sortField, String sortDir, Principal principal) {
 		
 		User user = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
 		String orgName = (null == user.getOrganization()?null : user.getOrganization().getName());
-		PaginationDto<Transaction> dtoList = transactionService.searchByField(id, sDate, eDate, employeeId,  employeeName, device, department, designation, pageno, sortField, sortDir, orgName);
+		PaginationDto<Transaction> dtoList = transactionService.searchByField(sDate, eDate, employeeId,  employeeName, device, department, designation, pageno, sortField, sortDir, orgName);
 		
 		List<Transaction> eventsList = dtoList.getData();
 		List<Transaction> transactionList = new ArrayList<Transaction>();

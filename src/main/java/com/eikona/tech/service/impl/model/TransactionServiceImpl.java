@@ -44,7 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
 	private ImportTransaction importTransaction;
 
 	@Override
-	public PaginationDto<Transaction> searchByField(Long id, String sDate, String eDate, String employeeId,
+	public PaginationDto<Transaction> searchByField(String sDate, String eDate, String employeeId,
 			String employeeName, String device, String department, String designation, int pageno,
 			String sortField, String sortDir, String orgName) {
 		Date startDate = null;
@@ -67,7 +67,7 @@ public class TransactionServiceImpl implements TransactionService {
 			sortField = ApplicationConstants.ID;
 		}
 
-		Page<Transaction> page = getTransactionBySpecification(id, employeeId, employeeName, device, department,
+		Page<Transaction> page = getTransactionBySpecification(employeeId, employeeName, device, department,
 				designation, pageno, sortField, sortDir, startDate, endDate, orgName);
 		List<Transaction> employeeShiftList = page.getContent();
 
@@ -78,7 +78,7 @@ public class TransactionServiceImpl implements TransactionService {
 		return dtoList;
 	}
 
-	private Page<Transaction> getTransactionBySpecification(Long id, String employeeId,String employeeName,
+	private Page<Transaction> getTransactionBySpecification(String employeeId,String employeeName,
 			String device, String department, String designation, int pageno, String sortField,
 			String sortDir, Date startDate, Date endDate, String orgName) {
 
@@ -93,7 +93,6 @@ public class TransactionServiceImpl implements TransactionService {
 //		}else {
 //			allSpec = generalSpecification.isNotNullSpecification(ApplicationConstants.DELIMITER_EMPTY);
 //		}
-		Specification<Transaction> idSpec = generalSpecification.longSpecification(id, ApplicationConstants.ID);
 		Specification<Transaction> dateSpec = generalSpecification.dateSpecification(startDate, endDate,
 				TransactionConstants.PUNCH_DATE);
 		Specification<Transaction> empIdSpec = generalSpecification.stringSpecification(employeeId, TransactionConstants.EMP_ID);
@@ -106,7 +105,7 @@ public class TransactionServiceImpl implements TransactionService {
 		Specification<Transaction> orgSpec = generalSpecification.stringSpecification(orgName,
 				AreaConstants.ORGANIZATION);
 
-		Page<Transaction> page = transactionRepository.findAll(idSpec.and(dateSpec).and(empIdSpec).and(empNameSpec)
+		Page<Transaction> page = transactionRepository.findAll(dateSpec.and(empIdSpec).and(empNameSpec)
 				.and(devSpec).and(deptSpec).and(desiSpec).and(orgSpec), pageable);
 		return page;
 	}

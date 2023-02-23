@@ -185,17 +185,17 @@ public class EmployeeController {
 	
 	@RequestMapping(value = "/api/search/employee", method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('employee_view')")
-	public @ResponseBody PaginationDto<Employee> searchEmployee(Long id, String name,String empId,String department,String designation,String grade, int pageno, String sortField, String sortDir, Principal principal) {
+	public @ResponseBody PaginationDto<Employee> searchEmployee(String name,String empId,String department,String designation,String grade, int pageno, String sortField, String sortDir, Principal principal) {
 		
 		User user = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
 		String orgname = (null == user.getOrganization()?null:user.getOrganization().getName());
-		PaginationDto<Employee> dtoList = employeeService.searchByField(id, name,empId,department,designation,grade,pageno, sortField, sortDir, orgname);
+		PaginationDto<Employee> dtoList = employeeService.searchByField(name,empId,department,designation,grade,pageno, sortField, sortDir, orgname);
 		return dtoList;
 	}
 	
 	@RequestMapping(value="/api/employee/export-to-excel",method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('employee_export')")
-	public void exportToFile(HttpServletResponse response,Long id, String name,String empId,String department,String designation, String flag, Principal principal) {
+	public void exportToFile(HttpServletResponse response,String name,String empId,String department,String designation,String grade, String flag, Principal principal) {
 		User userObj = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
 		String orgName = (null == userObj.getOrganization()? null : userObj.getOrganization().getName());
 		 response.setContentType("application/octet-stream");
@@ -205,7 +205,7 @@ public class EmployeeController {
 			String headerValue = "attachment; filename=Employee_master_data" + currentDateTime + "."+flag;
 			response.setHeader(headerKey, headerValue);
 		try {
-			exportEmployee.fileExportBySearchValue(response, id, name, empId,department,designation, flag, orgName );
+			exportEmployee.fileExportBySearchValue(response,name, empId,department,designation,grade, flag, orgName );
 		} catch (Exception  e) {
 			e.printStackTrace();
 		}

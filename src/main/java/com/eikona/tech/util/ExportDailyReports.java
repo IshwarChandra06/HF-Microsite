@@ -44,7 +44,7 @@ public class ExportDailyReports {
 	@Autowired
 	private CalendarUtil calendarUtil;
  
-	public void fileExportBySearchValue(HttpServletResponse response, Long id, String sDate, String eDate,
+	public void fileExportBySearchValue(HttpServletResponse response,String sDate, String eDate,
 			String employeeName, String employeeId, String designation, String department, String status,String shift, String flag,
 			String orgName) throws ParseException, IOException {
 
@@ -61,16 +61,15 @@ public class ExportDailyReports {
 			}
 		}
 		
-		List<DailyReport> dailyAttendanceList = getListOfDailyAttendance(id, employeeName, employeeId, designation,
+		List<DailyReport> dailyAttendanceList = getListOfDailyAttendance(employeeName, employeeId, designation,
 				department, status, startDate, endDate, orgName,shift);
 		
 		excelGenerator(response, dailyAttendanceList);
 	}
 	
-	private List<DailyReport> getListOfDailyAttendance(Long id, String employeeName, String employeeId, String designation,
+	private List<DailyReport> getListOfDailyAttendance(String employeeName, String employeeId, String designation,
 			String department, String status, Date startDate, Date endDate, String orgName,  String shift) {
 		
-		Specification<DailyReport> idSpec = generalSpecification.longSpecification(id, ApplicationConstants.ID);
 		Specification<DailyReport> dateSpec = generalSpecification.dateSpecification(startDate, endDate,ApplicationConstants.DATE);
 		Specification<DailyReport> employeeNameSpec = generalSpecification.stringSpecification(employeeName,DailyAttendanceConstants.EMPLOYEE_NAME);
 		Specification<DailyReport> employeeIdSpec = generalSpecification.stringSpecification(employeeId,DailyAttendanceConstants.EMPLOYEE_ID);
@@ -80,7 +79,7 @@ public class ExportDailyReports {
     	Specification<DailyReport> orgSpec = generalSpecification.stringSpecification(orgName, AreaConstants.ORGANIZATION);
     	Specification<DailyReport> shiftSpec = generalSpecification.stringSpecification(shift,DailyAttendanceConstants.SHIFT);
 		
-		List<DailyReport> dailyAttendanceList =dailyAttendanceRepository.findAll(idSpec.and(dateSpec).and(employeeNameSpec)
+		List<DailyReport> dailyAttendanceList =dailyAttendanceRepository.findAll(dateSpec.and(employeeNameSpec)
 				.and(employeeIdSpec).and(departmentSpec).and(designationSpec).and(statusSpec).and(orgSpec).and(shiftSpec));
 		return dailyAttendanceList;
 	}

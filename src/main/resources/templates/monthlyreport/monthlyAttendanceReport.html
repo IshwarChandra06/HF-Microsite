@@ -62,7 +62,7 @@
 						</div>
 						<div class="col"> 
 						<div class="col-auto float-right ml-auto"  id="excel-button" sec:authorize="hasAuthority('monthlyattendance_export')">
-							<button  value ="excel" type="button" class="btn add-btn export-data"><i class="las la-download"></i> Export to Excel</button>
+							<button  value ="excel" type="button" class="btn add-btn export-data"><i class="las la-download"></i> Export To Excel</button>
 						</div>
 					</div>
 					</div>
@@ -167,7 +167,7 @@
 					var oldInput = document.getElementById(selectedvalue[i]);
 					if(oldInput == null){
 						if(selectedvalue[i]=="month"){
-							inputText += '<div class="col-md-3"><div class="form-group">'+
+							inputText += '<div class="col-md-3" id="remove-element-'+selectedvalue[i]+'"><div class="form-group">'+
 							'<label><b>'+selectedvalue[i][0].toUpperCase()+ selectedvalue[i].slice(1)+':</b></label> '+
 							'<input type="month" placeholder="Enter '+selectedvalue[i]+'" id="'+selectedvalue[i]+'" class="form-control">'+
 						'</div></div>';
@@ -319,7 +319,7 @@
 	               		var pageno = pagenoData(result, pageFlag);
 	               		
 	               		if("sortBySearchField" == headFlag && showExport){
-	               			$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn btn-primary export-data-by-search"><i class="las la-download"></i> Export to Excel</button>');
+	               			$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn export-data-by-search"><i class="las la-download"></i> Export To Excel</button>');
 	               		}
 	               		
 						$("#table-header").html('').append(table_header);			
