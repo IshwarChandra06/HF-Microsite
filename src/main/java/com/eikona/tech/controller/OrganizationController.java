@@ -34,7 +34,7 @@ public class OrganizationController {
 	@Autowired
 	private UserRepository userRepository;
 
-	@GetMapping(value={"/organization","/"})
+	@GetMapping(value="/organization")
 	@PreAuthorize("hasAuthority('organization_view')")
 	public String list() {
 		return "organization/organization_list";

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="mataheader :: headfragment">
+<style type="text/css">
+	.anyClass {
+  		height:150px;
+  		overflow-y: scroll;
+	}
+	
+</style>
+</head>
+<body>
+
+<!-- Main Wrapper -->
+	<div class="main-wrapper">
+		<div th:replace="matatopmenu :: topmenufragment"> </div>
+		<div th:replace="mataleftmenu :: leftmenu"></div>
+
+	</div>
+	
+	<!-- Page Wrapper -->
+    <div class="page-wrapper">
+			
+		<!-- Page Content -->
+	    <div class="content container-fluid">
+	
+			<!-- /Page Header -->
+			<div class="row" th:object="${countDto}">
+				<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+					<div class="card dash-widget">
+						<div class="card-body">
+							<span class="dash-widget-icon"><i class="la la-city"></i></span>
+							<div class="dash-widget-info">
+								<h3><font color="#1863D6"><span  th:text="*{totalOrganization}"></span></font></h3>
+								<span>Total Organization</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+					<div class="card dash-widget">
+						<div class="card-body">
+							<span class="dash-widget-icon"><i class="las la-mobile"></i></span>
+							<div class="dash-widget-info">
+								<h3><font color="#1863D6"><span th:text="*{totalInstalledDevice}"></span></font></h3>
+								<span>Total Devices</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+					<div class="card dash-widget">
+						<div class="card-body">
+							<span class="dash-widget-icon"><i class="las la-play"></i></span>
+							<div class="dash-widget-info">
+								<h3><font color="#1863D6"><span th:text="*{totalOnline}"></span></font></h3>
+								<span>Online Devices</span>
+							</div>
+							</div>
+						</div>
+				</div>
+				<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+					<div class="card dash-widget">
+						<div class="card-body">
+							<span class="dash-widget-icon"><i class="las la-stop-circle"></i></span>
+							<div class="dash-widget-info">
+								<h3><font color="#1863D6"><span th:text="*{totalOffline}"></span></font></h3>
+								<span>Offline Devices</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-md-4  d-flex ">
+					<div class="card flex-fill dash-statistics ">
+						<div class="card-header" style="text-align: center;">
+							<h3 class="card-title mb-0">Organization Wise Device Status</h3>
+						</div>
+						<div class="card-body">
+							<div class="stats-list realtime-list"></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-8 d-flex" >
+					<div class="col-md-12 text-center">
+						<div class="card">
+							<div class="card-body">
+								<h3 class="card-title">Organization Wise Today Attendance</h3>
+								<div id="bar_chart"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-md-12 d-flex">
+					<div class="card card-table flex-fill text-center">
+						<div class="card-header">
+							<h3 class="card-title mb-0">Site Wise Device Details</h3>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive realtime-list">
+								<table class="table custom-table mb-0">
+									<thead class="table-header"></thead>
+									<tbody class="table-data"></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div th:replace="matafooter :: footer"></div>
+
+	
+	<!-- load graph -->
+	<script src="/assets/js/loader.js"></script>
+	<!-- Custom JS -->
+	<script src="/assets/js/app.js"></script> 
+
+<script>
+	$(document).ready(function() {
+		$("#dashboard_menu").addClass("active");
+		google.charts.load('current', {'packages':['corechart']});
+        emploeeLoginDashboard();
+		drawDashboard();
+		siteWiseDeviceInfo();
+	});
+	
+	function siteWiseDeviceInfo(){
+		$.ajax({
+			url : '/api/device-table',
+			success : function(result) {
+				
+				var table_header = 
+				'<th>Organization</th>'+
+				'<th>Location</th>'+
+			 	'<th>Device Id</th>'+
+				'<th>Total Enrolment</th>'+
+				'<th>Logins Today</th>'+
+				'<th>Unregistered Events Today</th>'+
+				'<th>Device Capacity</th>';
+				
+				var table_data = '';
+				$.each(result, function(i, obj) {
+					var tableData= '<tr>'+
+					'<td>'+obj.organization+'</td>'+
+						'<td>'+obj.device+'</td>'+
+						'<td>'+obj.serialNo+'</td>'+
+						'<td>'+obj.totalPerson+'</td>'+
+						'<td>'+obj.totalTransaction+'</td>'+
+						'<td>'+obj.totalUnregisterTransaction+'</td>'+
+						'<td>'+obj.capacity+'</td></tr>';
+					
+					table_data +=tableData;
+				});
+				
+				$(".table-header").html('').append(table_header);
+				$(".table-data").html('').append(table_data);
+			}
+		 });
+	}
+	
+	function emploeeLoginDashboard(){
+		$.ajax({
+			url : '/api/employee-login-chart',
+			success : function(result) {
+				if(result.length === 0){
+					$("#bar_chart").html('').append("No Data")
+				}else{
+					google.charts.setOnLoadCallback( function() {drawBarChart(result);});
+				}
+			}
+		 });
+	}
+	
+	function drawBarChart(result){
+		console.log(result)
+		var data = new google.visualization.DataTable();
+	    data.addColumn('string', 'Organization');
+	    data.addColumn('number', 'Present Employee');
+        var dataArray = result.data;
+		data.addRows(dataArray);
+	    var options = {
+	        height:300,
+	        vAxis: {
+	    		 textStyle:{
+	    			 bold:true
+				},
+				titleTextStyle:{
+	    			 bold:true
+				},
+	    	 },
+	    	 hAxis: {
+	    		 slantedText:true,
+	    		 textStyle:{
+	    			 bold:true
+				}
+	    	 },
+	    	 explorer: {
+	              keepInBounds: true,
+	              maxZoomIn: 4.0
+	         },
+	    };
+	    	 
+	    var chart = new google.visualization.ColumnChart(document.getElementById('bar_chart'));
+	    chart.draw(data, options);
+	}
+	
+	function drawDashboard(){
+		$.ajax({
+			url : '/api/common-chart-data',
+			success : function(result) {
+				var deviceData = result.device;
+// 				var loginEmployee = result.employee;
+				deviceList(deviceData);
+// 				drawBarChart(loginEmployee);
+			}
+		 });
+	
+		function deviceList(result) {
+			var deviceData = '' ;
+			$(".stats-list").html('');
+			$.each(result, function(i, obj) {
+				var value= (obj.onlineDevice/obj.totalDevice)*100;
+				deviceData += '<div class="stats-info">'
+					+'<p>'+obj.organization+ '<strong>'+obj.onlineDevice+' <small>/ '+obj.totalDevice+'</small></strong></p>'
+					+'<div class="progress">'
+					+'<div class="progress-bar bg-primary" role="progressbar" style="width: '+value+'%" aria-valuenow="'+value+'" aria-valuemin="0" aria-valuemax="100"></div>'
+					+'</div>'
+					+'</div>';
+			});
+			$(".stats-list").append(deviceData);
+		}
+		
+    }
+	
+   
+</script>
+</body>
+</html>

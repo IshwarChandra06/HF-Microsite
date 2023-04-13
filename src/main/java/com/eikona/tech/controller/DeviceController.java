@@ -22,15 +22,21 @@ import com.eikona.tech.dto.PaginationDto;
 import com.eikona.tech.entity.Device;
 import com.eikona.tech.entity.Organization;
 import com.eikona.tech.entity.User;
+import com.eikona.tech.repository.AreaRepository;
 import com.eikona.tech.repository.OrganizationRepository;
 import com.eikona.tech.repository.UserRepository;
+import com.eikona.tech.service.AreaService;
 import com.eikona.tech.service.DeviceService;
+import com.eikona.tech.service.impl.model.SchedulerServiceImpl;
 
 @Controller
 public class DeviceController {
 	
 	@Autowired
 	private DeviceService deviceService;
+	
+	@Autowired
+	private AreaService areaService;
 
 	@Autowired
 	private OrganizationRepository organizationRepository;
@@ -38,12 +44,21 @@ public class DeviceController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private AreaRepository areaRepository;
+	
+	@Autowired
+	private SchedulerServiceImpl schedulerServiceImpl;
+	
 	@GetMapping("/device")
 	@PreAuthorize("hasAuthority('device_view')")
 	public String deviceList(Model model) {
 		return "device/device_list";
 	}
-
+	@GetMapping("/keep-online-test")
+	public void keepDeviceOnline() {
+		schedulerServiceImpl.keepDeviceOnline();
+	}
 	@GetMapping("/device/new")
 	@PreAuthorize("hasAuthority('device_create')")
 	public String newDevice(Model model, Principal principal) {
@@ -55,6 +70,7 @@ public class DeviceController {
 			organizationList = organizationRepository.findByIdAndIsDeletedFalse(user.getOrganization().getId());
 		}
 		model.addAttribute("listOrganization", organizationList);
+		model.addAttribute("listArea", areaService.getAll());
 		Device device = new Device();
 		model.addAttribute("device", device);
 		model.addAttribute("title", "New Device");
@@ -75,6 +91,7 @@ public class DeviceController {
 				organizationList = organizationRepository.findByIdAndIsDeletedFalse(user.getOrganization().getId());
 			}
 			model.addAttribute("listOrganization", organizationList);
+			model.addAttribute("listArea", areaRepository.findByOrganizationAndIsDeletedFalse(user.getOrganization()));
 			model.addAttribute("title", title);
 			return "device/device_new";
 		} else {
@@ -105,6 +122,7 @@ public class DeviceController {
 		}else {
 			organizationList = organizationRepository.findByIdAndIsDeletedFalse(user.getOrganization().getId());
 		}
+		model.addAttribute("listArea", areaRepository.findByOrganizationAndIsDeletedFalse(user.getOrganization()));
 		model.addAttribute("listOrganization", organizationList);
 		model.addAttribute("device", device);
 		model.addAttribute("title", "Update Device");
@@ -128,4 +146,10 @@ public class DeviceController {
 		return dtoList;
 	}
 	
+	@GetMapping("/mata-to-device-sync/{id}")
+	@PreAuthorize("hasAuthority('mata_to_device_sync')")
+	public String employeeSyncFromMataToDevice(@PathVariable(value = "id") long id) {
+		deviceService.employeeSyncFromMataToDevice(id);
+		return "redirect:/device";
+	}
 }

@@ -17,4 +17,6 @@ public interface DesignationRepository extends DataTablesRepository<Designation,
 
 	List<Designation> findByOrganizationAndIsDeletedFalse(Organization organization);
 
+	List<Designation> findAllByIsDeletedFalseAndOrganization(Organization organization);
+
 }

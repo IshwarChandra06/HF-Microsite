@@ -2,6 +2,7 @@ package com.eikona.tech.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,17 +21,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.eikona.tech.constants.ApplicationConstants;
-import com.eikona.tech.constants.DefaultConstants;
 import com.eikona.tech.constants.MessageConstants;
 import com.eikona.tech.constants.NumberConstants;
 import com.eikona.tech.entity.Department;
 import com.eikona.tech.entity.Designation;
 import com.eikona.tech.entity.Employee;
 import com.eikona.tech.entity.Organization;
+import com.eikona.tech.entity.User;
 import com.eikona.tech.repository.DepartmentRepository;
 import com.eikona.tech.repository.DesignationRepository;
 import com.eikona.tech.repository.EmployeeRepository;
-import com.eikona.tech.repository.OrganizationRepository;
+import com.eikona.tech.repository.UserRepository;
 
 @Component
 public class ExcelEmployeeImport {
@@ -40,10 +41,10 @@ public class ExcelEmployeeImport {
 	
 	@Autowired
 	private DesignationRepository designationrepository;
-
-	@Autowired
-	private OrganizationRepository organizationrepository;
 	
+	@Autowired
+	private UserRepository userRepository;
+
 	@Autowired
 	private EmployeeRepository employeeRepository;
 	
@@ -189,7 +190,7 @@ public class ExcelEmployeeImport {
 		}
 		return str;
 	}
-	public List<Employee> parseExcelFileEmployeeList(InputStream inputStream) throws ParseException {
+	public List<Employee> parseExcelFileEmployeeList(InputStream inputStream, Principal principal) throws ParseException {
 		List<Employee> employeeList = new ArrayList<Employee>();
 		try {
 
@@ -201,10 +202,11 @@ public class ExcelEmployeeImport {
 			
 
 			int rowNumber = NumberConstants.ZERO;
-			Map<String, Designation> designationMap = employeeObjectMap.getDesignation();
-			Map<String, Department> deptMap = employeeObjectMap.getDepartment();
-			List<String> empIdList=employeeRepository.getEmpIdAndIsDeletedFalseCustom();
-			Organization org = organizationrepository.findById(DefaultConstants.DEFAULT_ORGANIZATION_ID).get();
+			User user=userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
+			Map<String, Designation> designationMap = employeeObjectMap.getDesignation(user.getOrganization());
+			Map<String, Department> deptMap = employeeObjectMap.getDepartment(user.getOrganization());
+			Map<String, Employee> employeeMap = employeeObjectMap.getEmployeeByEmpId(user.getOrganization());
+//			List<String> empIdList=employeeRepository.getEmpIdAndIsDeletedFalseCustom();
 			while (rows.hasNext()) {
 				Row currentRow = rows.next();
 
@@ -216,20 +218,31 @@ public class ExcelEmployeeImport {
 
 				rowNumber++;
 				
-				Employee employee=excelRowToEmployee(currentRow,org,designationMap,deptMap);
+				Employee employee=excelRowToEmployee(currentRow,user.getOrganization(),designationMap,deptMap);
 				
-				boolean isContains=empIdList.contains(employee.getEmpId());
+				Employee emp=employeeMap.get(employee.getEmpId());
 				
-				if(!isContains && null!=employee.getName() && !employee.getName().isEmpty() &&
+				if(null==emp && null!=employee.getName() && !employee.getName().isEmpty() &&
 						!(employee.getName().contains("N/A")) && null!=employee.getEmpId()&& !employee.getEmpId().isEmpty())
 				employeeList.add(employee);
+				else if(null!=emp) {
+					emp.setFatherName(employee.getFatherName());
+					emp.setGender(employee.getGender());
+					emp.setEmail(employee.getEmail());
+					emp.setDepartment(employee.getDepartment());
+					emp.setDesignation(employee.getDesignation());
+					emp.setGrade(employee.getGrade());
+					emp.setMobile(employee.getMobile());
+					emp.setPermanentAddress(employee.getPermanentAddress());
+					emp.setResidentialAddress(employee.getResidentialAddress());
+					emp.setJoinDate(employee.getJoinDate());
+					employeeList.add(emp);
+				}
 				
 				if(rowNumber%NumberConstants.HUNDRED==NumberConstants.ZERO) {
 					employeeRepository.saveAll(employeeList);
 					employeeList.clear();
 				}
-					
-					
 			}
 			
 			if(!employeeList.isEmpty()) {

@@ -60,6 +60,9 @@
 							 <a th:href="@{/import/employee-list}" class="btn add-btn"><i class="las la-file-import"></i>Import Employee Excel</a>
 							</div>
 							<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('employee_import')">
+							 <a th:href="@{/import/image-directory}" class="btn add-btn"><i class="las la-file-import"></i>Import Image Directory</a>
+							</div>
+							<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('employee_import')">
 							 <a th:href="@{/import/employee-delete-list}" class="btn add-btn"><i class="las la-file-import"></i>Import Excel For Delete</a>
 							</div>
 							
@@ -129,6 +132,7 @@
 		<div sec:authorize="hasAuthority('employee_update')"> <span id="span_update"></span></div>
 		<div sec:authorize="hasAuthority('employee_delete')"> <span id="span_delete"></span></div>
 	<div sec:authorize="hasAuthority('employee_export')"> <span id="span_export"></span></div>
+	<div sec:authorize="hasAuthority('employee_area_association')"> <span id="span_area"></span></div>
 	</div>
 
 	<div th:replace="matafooter :: footer"></div>
@@ -142,7 +146,8 @@
 			var showUpdate = $("#span_update").length>0;
 			var showDelete = $("#span_delete").length>0;
 			var showExport = $("#span_export").length>0;
-			
+			var showArea = $("#span_area").length>0;
+			console.log(showArea)
 			$(function(){
 		        $('#people').multiSelect();
 		        $('#ice-cream').multiSelect();
@@ -341,6 +346,8 @@
 						'<th><b>Permanent Address</b></th>'+
 						'<th><b>Residential Address</b></th>'+
 						'<th><b>Image</b></th>';
+						if(showArea)
+							table_header+='<th><b>Area</b></th>';
 					if(showUpdate || showDelete)
 						table_header+='<th><b> Actions</b></th>';
 				}else {
@@ -369,6 +376,8 @@
 					'</th><th>'+			
 						'<button  value="'+result.page_number+'-residentialAddress-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Residential Address</b></button>'+	
 					'</th><th><b> Image</b></th>';
+					if(showArea)
+						table_header+='<th><b>Area</b></th>';
 					if(showUpdate || showDelete)
 						table_header+='<th><b> Actions</b></th>';
 				}
@@ -444,6 +453,8 @@
               	 	} else{
               	 		table_data += '<td>'+""+'</td>';
               	 	}
+              	 	if(showArea)
+           				table_data +='<td> <a href="/employee-to-area/association/'+customer.id+'" class="btn btn-primary"><i class="las la-landmark"></i></a></td>';
            				
        				if(showUpdate)
            				table_data +='<td> <a href="/employee/edit/'+customer.id+'" class="btn btn-primary"><i class="las la-edit"></i></a>';

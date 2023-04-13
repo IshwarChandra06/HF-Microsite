@@ -50,5 +50,6 @@ public class NumberConstants {
 	public static final String FIVE_HUNDRED_EIGHTY_SEVEN = "587";
 	public static final Integer THOUSAND_EIGHTY = 1080;
 	public static final Integer NINETEEN_HUNDRED_TWENTY = 1920;
+	public static final Integer EIGHT_THOUSAND_ONE_HUNDRED_NINTY = 8190;
 	
 }

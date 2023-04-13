@@ -38,13 +38,17 @@ public class SavingCropImageUtil {
 
 		byte[] decodedBytes = Base64.getDecoder().decode(base64);
 		InputStream inputStream = new ByteArrayInputStream(decodedBytes);
-
+		String organization="";
+		if(null!=trans.getOrganization())
+		 organization=trans.getOrganization();
+		else
+		 organization="Default";
 		FileSystemContent fileObj = new FileSystemContent();
 		fileObj.setContentMimeType(ApplicationConstants.MIME_TYPE_JPG);
 		String dateFolder = contentDateFolderformat.format(trans.getPunchDate());
 		String imageFileDate = contentImageFileformat.format(trans.getPunchDate());
 		fileObj.setContentPath(fileObj.getContentMimeType().split(ApplicationConstants.DELIMITER_FORWARD_SLASH)[NumberConstants.ZERO] 
-				+ ApplicationConstants.DELIMITER_FORWARD_SLASH +DefaultConstants.TRANSACTION_STORE_FOLDER+ApplicationConstants.DELIMITER_FORWARD_SLASH + dateFolder 
+				+ ApplicationConstants.DELIMITER_FORWARD_SLASH +organization+ApplicationConstants.DELIMITER_FORWARD_SLASH + dateFolder 
 				+ ApplicationConstants.DELIMITER_FORWARD_SLASH + imageFileDate + ApplicationConstants.DELIMITER_HYPHEN + trans.getEmpId() + ApplicationConstants.EXTENSION_JPG);
 
 		String path = DefaultConstants.CONTENT_STORE_ROOT_PATH + fileObj.getContentPath();

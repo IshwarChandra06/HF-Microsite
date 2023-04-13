@@ -31,8 +31,9 @@ public interface EmployeeService {
 	/**
 	 * This function retrieves the employee data from the excel file and set into database.
 	 * @param file -MultipartFile
+	 * @param principal 
 	 */
-	String storeEmployeeList(MultipartFile file);
+	String storeEmployeeList(MultipartFile file, Principal principal);
 	/**
 	 * This function deletes the employee from database according to the respective id.  
 	 * @param
@@ -41,6 +42,9 @@ public interface EmployeeService {
 	
 	PaginationDto<Employee> searchByField(String name, String empId, String department, String designation,
 			String grade, int pageno, String sortField, String sortDir, String orgname);
+	
 	String deleteEmployeeList(MultipartFile file);
+	
+	void saveEmployeeAreaAssociation(Employee employee, Long id);
 
 }

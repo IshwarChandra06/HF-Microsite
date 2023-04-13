@@ -2,17 +2,23 @@ package com.eikona.tech.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity(name = "et_employee")
 public class Employee extends Auditable<String> implements Serializable {
@@ -68,6 +74,18 @@ public class Employee extends Auditable<String> implements Serializable {
 	
 	@Column
 	private String joinDate;
+	
+	@ManyToMany
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinTable(name = "et_employee_area",
+    joinColumns = @JoinColumn(name = "employee_id"),
+    inverseJoinColumns = @JoinColumn(name = "area_id"),
+    indexes = {
+	        @Index(name = "idx_area_id", columnList = "area_id"),
+	        @Index(name = "idx_employee_id", columnList = "employee_id")
+	}
+	    )
+	private List<Area> area;
 
 	@Column(name = "crop_image")
 	private byte[] cropImage;
@@ -80,6 +98,15 @@ public class Employee extends Auditable<String> implements Serializable {
 	
 	@Column(name = "is_sync")
 	private boolean isSync;
+	
+	@Column(name = "is_face_sync")
+	private boolean isFaceSync;
+	
+	@Column(name = "is_sync_from_device")
+	private boolean isSyncFromDevice;
+	
+	@Column(name = "is_face_sync_from_device")
+	private boolean isFaceSyncFromDevice;
 
 	public Long getId() {
 		return id;
@@ -190,6 +217,25 @@ public class Employee extends Auditable<String> implements Serializable {
 	public void setSync(boolean isSync) {
 		this.isSync = isSync;
 	}
+	
+	public boolean isFaceSync() {
+		return isFaceSync;
+	}
+	public void setFaceSync(boolean isFaceSync) {
+		this.isFaceSync = isFaceSync;
+	}
+	public boolean isSyncFromDevice() {
+		return isSyncFromDevice;
+	}
+	public void setSyncFromDevice(boolean isSyncFromDevice) {
+		this.isSyncFromDevice = isSyncFromDevice;
+	}
+	public boolean isFaceSyncFromDevice() {
+		return isFaceSyncFromDevice;
+	}
+	public void setFaceSyncFromDevice(boolean isFaceSyncFromDevice) {
+		this.isFaceSyncFromDevice = isFaceSyncFromDevice;
+	}
 	public Employee( String name,
 			@NotBlank(message = "Please provide a unique employee id") String empId, boolean isDeleted) {
 		super();
@@ -201,4 +247,11 @@ public class Employee extends Auditable<String> implements Serializable {
 	{
 		
 	}
+	public List<Area> getArea() {
+		return area;
+	}
+	public void setArea(List<Area> area) {
+		this.area = area;
+	}
+	
 }

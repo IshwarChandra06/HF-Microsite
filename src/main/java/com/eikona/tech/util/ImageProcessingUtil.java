@@ -1,5 +1,6 @@
 package com.eikona.tech.util;
 
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -179,20 +180,23 @@ public class ImageProcessingUtil {
 			List<Image> imageList = new ArrayList<>();
 			List<Employee> employeeList = new ArrayList<Employee>();
 			if (null != employee) {
+				employee.setSync(false);
+				employee.setFaceSync(false);
 				employeeList.add(employee);
 
 				byte[] bytes = file.getBytes();
 				InputStream is = new ByteArrayInputStream(bytes);
 				BufferedImage originalImage = ImageIO.read(is);
 
-				String[] imagePath = imageProcessing(originalImage,employee.getEmpId());
+				String[] imagePath = imageProcessing(originalImage, employee.getEmpId());
 				Image imageObj = imageRepository.findByOriginalPath(imagePath[NumberConstants.ZERO]);
 				if (null == imageObj) {
 					Image imageSaved = new Image();
 					setImagePath(imageList, employeeList, imagePath, imageSaved);
 				}
+				employeeRepository.save(employee);
 			}
-
+			
 			imageRepository.saveAll(imageList);
 
 		} catch (Exception e) {
@@ -214,6 +218,8 @@ public class ImageProcessingUtil {
 				Employee employee = searchEmployee(empId);
 				List<Employee> employeeList = new ArrayList<Employee>();
 				if (null != employee) {
+					employee.setSync(false);
+					employee.setFaceSync(false);
 					employeeList.add(employee);
 
 					byte[] bytes = file.getBytes();
@@ -226,7 +232,9 @@ public class ImageProcessingUtil {
 						Image imageSaved = new Image();
 						setImagePath(imageList, employeeList, imagePath, imageSaved);
 					}
+					employeeRepository.save(employee);
 				}
+				
 			}
 
 			imageRepository.saveAll(imageList);

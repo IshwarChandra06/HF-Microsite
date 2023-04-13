@@ -9,6 +9,7 @@ public final class DefaultConstants {
 	public static final String TRANSACTION_STORE_FOLDER="Meramandali";
 	
 	public static final String CONTENT_STORE_ROOT_PATH="C:/Users/Administrator/Documents/workspace/";
+//	public static final String CONTENT_STORE_ROOT_PATH="mata/images/";
 	
 	public static final String EMPLOYEE_ORIGINAL_PATH="employee/images/orginal";
 	public static final String EMPLOYEE_RESIZE_PATH="employee/images/resize";

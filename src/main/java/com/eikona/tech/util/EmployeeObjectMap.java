@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.eikona.tech.entity.Department;
 import com.eikona.tech.entity.Designation;
 import com.eikona.tech.entity.Employee;
+import com.eikona.tech.entity.Organization;
 import com.eikona.tech.repository.DepartmentRepository;
 import com.eikona.tech.repository.DesignationRepository;
 import com.eikona.tech.repository.EmployeeRepository;
@@ -26,8 +27,8 @@ public class EmployeeObjectMap {
 	@Autowired
 	private EmployeeRepository employeeRepository;
 	
-	public Map<String, Department> getDepartment(){
-		List<Department> departmentList = departmentRepository.findAllByIsDeletedFalse();
+	public Map<String, Department> getDepartment(Organization organization){
+		List<Department> departmentList = departmentRepository.findAllByIsDeletedFalseAndOrganization(organization);
 		Map<String, Department> deptMap = new HashMap<String, Department>();
 		
 		for(Department department: departmentList ) {
@@ -37,9 +38,9 @@ public class EmployeeObjectMap {
 	}
 	
 	
-	public Map<String, Designation> getDesignation(){
+	public Map<String, Designation> getDesignation(Organization organization){
 		
-		List<Designation> desigList = designationRepository.findAllByIsDeletedFalse();
+		List<Designation> desigList = designationRepository.findAllByIsDeletedFalseAndOrganization(organization);
 		Map<String, Designation> desigMap = new HashMap<String, Designation>();
 		
 		
@@ -69,8 +70,8 @@ public class EmployeeObjectMap {
 		return employeeMap;
 	}
 	
-	public Map<String, Employee> getEmployeeByEmpId(){
-		List<Employee> employeeList = employeeRepository.findAllByIsDeletedFalse();
+	public Map<String, Employee> getEmployeeByEmpId(Organization organization){
+		List<Employee> employeeList = employeeRepository.findAllByIsDeletedFalseAndOrganization(organization);
 		Map<String, Employee> employeeMap = new HashMap<String, Employee>();
 		
 		for(Employee employee: employeeList ) {

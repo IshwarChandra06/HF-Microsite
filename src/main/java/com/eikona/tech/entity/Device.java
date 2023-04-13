@@ -38,6 +38,9 @@ public class Device extends Auditable<String> implements Serializable {
 	@Column(unique = true,name = "serial_no")
 	@NotBlank(message = "Please provide a unique serial no")
 	private String serialNo;
+	
+	@Column
+	private String model;
 
 	@Column(name = "ip_address")
 	private String ipAddress;
@@ -45,6 +48,10 @@ public class Device extends Auditable<String> implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "organization_id")
 	private Organization organization;
+	
+	@ManyToOne
+	@JoinColumn(name = "area_id")
+	private Area area;
 	
 	@Column(name = "last_online")
 	private Date lastOnline;
@@ -60,6 +67,12 @@ public class Device extends Auditable<String> implements Serializable {
 	
 	@Column(name = "is_sync")
 	private boolean isSync;
+	
+	@Column(name = "person_no")
+	private Long personNo;
+	
+	@Column(name = "face_no")
+	private Long faceNo;
 	
 	@Column
 	private String status;
@@ -169,6 +182,38 @@ public class Device extends Auditable<String> implements Serializable {
 
 	public void setDeviceType(Long deviceType) {
 		this.deviceType = deviceType;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public Area getArea() {
+		return area;
+	}
+
+	public void setArea(Area area) {
+		this.area = area;
+	}
+
+	public Long getPersonNo() {
+		return personNo;
+	}
+
+	public void setPersonNo(Long personNo) {
+		this.personNo = personNo;
+	}
+
+	public Long getFaceNo() {
+		return faceNo;
+	}
+
+	public void setFaceNo(Long faceNo) {
+		this.faceNo = faceNo;
 	}
 
 	public String getStatus() {

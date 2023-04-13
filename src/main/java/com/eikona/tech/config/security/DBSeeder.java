@@ -43,7 +43,7 @@ public class DBSeeder implements CommandLineRunner {
 			}
 		}
 	private List<Privilege> SeedPrivileges() {
-		
+		Privilege dashboardView = new Privilege("dashboard_view", false);
 		Privilege orgView = new Privilege("organization_view", false);
 		Privilege orgCreate = new Privilege("organization_create", false);
 		Privilege orgUpdate = new Privilege("organization_update", false);
@@ -58,6 +58,16 @@ public class DBSeeder implements CommandLineRunner {
 		Privilege roleCreate = new Privilege("role_create", false);
 		Privilege roleUpdate = new Privilege("role_update", false);
 		Privilege roleDelete = new Privilege("role_delete", false);
+		
+		Privilege areaView = new Privilege("area_view", false);
+		Privilege areaCreate = new Privilege("area_create", false);
+		Privilege areaUpdate = new Privilege("area_update", false);
+		Privilege areaDelete = new Privilege("area_delete", false);
+		
+		Privilege actiondetailsView = new Privilege("action_details_view", false);
+		Privilege actiondetailsExport = new Privilege("action_details_export", false);
+		Privilege actionview = new Privilege("action_view", false);
+		Privilege employeeAreaAssociation = new Privilege("employee_area_association", false);
 		
 		Privilege privilegeView = new Privilege("privilege_view", false);
 		Privilege privilegeUpdate = new Privilege("privilege_update", false);
@@ -94,6 +104,7 @@ public class DBSeeder implements CommandLineRunner {
 		Privilege employeeCreate = new Privilege("employee_create", false);
 		Privilege employeeUpdate = new Privilege("employee_update", false);
 		Privilege employeeDelete = new Privilege("employee_delete", false);
+		Privilege mataToDeviceSync = new Privilege("mata_to_device_sync", false);
 		
 		Privilege employeeImport = new Privilege("employee_import", false);
 		Privilege employeeExport = new Privilege("employee_export", false);
@@ -101,10 +112,11 @@ public class DBSeeder implements CommandLineRunner {
 		
 		
 		List<Privilege> privileges = Arrays.asList(
-				orgView, orgCreate, orgUpdate, orgDelete,
-				userView, userCreate, userUpdate, userDelete,
-				roleView, roleCreate, roleUpdate, roleDelete,
-				privilegeView,privilegeUpdate,privilegeDelete,
+				orgView, orgCreate, orgUpdate, orgDelete,dashboardView,
+				areaView,areaCreate,areaUpdate,areaDelete,actionview,
+				userView, userCreate, userUpdate, userDelete,actiondetailsView,actiondetailsExport,
+				roleView, roleCreate, roleUpdate, roleDelete,employeeAreaAssociation,
+				privilegeView,privilegeUpdate,privilegeDelete,mataToDeviceSync,
 				dailyreportView,dailyreportGenerate,dailyreportGenerateShiftwise,dailyreportExport,
 				departmentView,departmentCreate,departmentUpdate,departmentDelete,
 				designationView,designationCreate,designationUpdate,designationDelete,

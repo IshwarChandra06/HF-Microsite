@@ -81,9 +81,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public String storeEmployeeList(MultipartFile file) {
+	public String storeEmployeeList(MultipartFile file,Principal principal) {
 		try {
-			List<Employee> employeeList = excelEmployeeImport.parseExcelFileEmployeeList(file.getInputStream());
+			List<Employee> employeeList = excelEmployeeImport.parseExcelFileEmployeeList(file.getInputStream(),principal);
 			employeeRepository.saveAll(employeeList);
 			return "File uploaded successfully!";
 		} catch (IOException | ParseException e) {
@@ -146,5 +146,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 			e.printStackTrace();
 			return "Fail! -> uploaded filename: " + file.getOriginalFilename();
 		}
+	}
+
+	@Override
+	public void saveEmployeeAreaAssociation(Employee employee, Long id) {
+		Employee employeeObj = getById(id);
+		employeeObj.setArea(employee.getArea());
+		employeeRepository.save(employeeObj);
 	}
 }

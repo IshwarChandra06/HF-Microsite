@@ -3,6 +3,7 @@ package com.eikona.tech.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.datatables.repository.DataTablesRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,7 @@ import com.eikona.tech.entity.Organization;
 public interface EmployeeRepository extends DataTablesRepository<Employee, Long> {
 
 	List<Employee> findAllByIsDeletedFalse();
-
+	
 	@Query("select emp.id from com.eikona.tech.entity.Employee as emp where emp.isDeleted=false and empId=:empId")
 	Long findByEmpIdAndIsDeletedFalseCustom(String empId);
 	
@@ -41,5 +42,20 @@ public interface EmployeeRepository extends DataTablesRepository<Employee, Long>
 	
 	@Query("Select e from com.eikona.tech.entity.Employee e where e.isDeleted=false and e.empId like %:empId")
 	Employee findByEmpIdCustom(String empId);
+	
+	@Query("Select e from com.eikona.tech.entity.Employee e where e.isDeleted=false and e.isSync=false and NOT(e.area IS EMPTY)")
+	List<Employee> findAllByIsDeletedFalseAndIsSyncFalseCustom();
+
+	List<Employee> findAllByIsDeletedFalseAndIsSyncTrueAndIsFaceSyncFalse();
+
+	List<Employee> findAllByIsDeletedFalseAndIsSyncFromDeviceTrue();
+
+	@Query("select e from com.eikona.tech.entity.Employee e JOIN e.area as a where e.isDeleted = false and a.id = :id and is_sync=false and is_face_sync=false")
+	List<Employee> findByAreaIdAndIsDeletedFalseCustom(Long id, Pageable paging);
+
+	@Query("select count(e.id) from com.eikona.tech.entity.Employee e JOIN e.area as a where e.isDeleted = false and a.id = :id and is_sync=false and is_face_sync=false")
+	long countEmployeeAndIsDeletedFalseCustom(Long id);
+
+	List<Employee> findAllByIsDeletedFalseAndOrganization(Organization organization);
 	
 }

@@ -8,6 +8,7 @@ public final class ApplicationConstants {
 	public static final String  HEADER_CONTENT_TYPE = "Content-type";
 	public static final String  HEADER_CONTENT_LENGTH ="Content-length";
 	public static final String  APPLICATION_JSON = "application/json";
+	public static final String  X_WWW_FORM_URLENCODED ="application/x-www-form-urlencoded";
 	public static final String  APPLICATION_URL_ENCODED = "application/x-www-form-urlencoded";
 	
 	public static final String  BASIC_AUTH = "Basic ";
@@ -120,6 +121,7 @@ public final class ApplicationConstants {
 	public static final String  MIME_TYPE_JPG = "image/jpg";
 	public static final String  MIME_TYPE_TEXT ="text/plain";
 	public static final String TOTAL_PRESENT = "Total Present";
+	public static final String LAST_MODIFIED_DATE = "lastModifiedDate";
 	
 	
 	

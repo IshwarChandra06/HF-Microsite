@@ -29,9 +29,9 @@
 									Device</li>
 							</ul>
 						</div>
-						<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('device_create')">
-							 <a th:href="@{/device/new}" class="btn add-btn"><i class="fa fa-plus"></i> Add Device</a>
-						</div>
+<!-- 						<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('device_create')"> -->
+<!-- 							 <a th:href="@{/device/new}" class="btn add-btn"><i class="fa fa-plus"></i> Add Device</a> -->
+<!-- 						</div> -->
 					</div>
 				</div>
 				<!-- /Page Header -->
@@ -86,6 +86,7 @@
 	<div style="display:none;">
 		<div sec:authorize="hasAuthority('device_update')"> <span id="span_update"></span></div>
 		<div sec:authorize="hasAuthority('device_delete')"> <span id="span_delete"></span></div>
+		<div sec:authorize="hasAuthority('mata_to_device_sync')"> <span id="span_push"></span></div>
 	</div>
 	
 	<div th:replace="matafooter :: footer"></div>
@@ -102,6 +103,7 @@
 			
 			var showUpdate = $("#span_update").length>0;
 			var showDelete = $("#span_delete").length>0;
+			var showPush = $("#span_push").length>0;
 			
 			$(function(){
 		        $('#people').multiSelect();
@@ -298,10 +300,14 @@
 					table_header = '<th><b>Id</b></th>'+
 						'<th><b>Name</b></th>'+
 						'<th><b>Organization</b></th>'+
+						'<th><b>Area</b></th>'+
 						'<th><b>IP Address</b></th>'+
 						'<th><b>Serial No</b></th>'+
 						'<th><b>Last Online</b></th>'+
 						'<th><b>Ping Status</b></th>';
+						if(showPush){
+							table_header +='<th><b>Sync Employees To Device</b></th>';
+						}
 						if(showUpdate || showDelete){
 							table_header +='<th><b> Actions</b></th>';
 						}
@@ -313,6 +319,8 @@
 						'</th><th>'+
 			   				'<button  value="'+result.page_number+'-organization-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Organization</b></button>'+
 			   			'</th><th>'+
+			   				'<button  value="'+result.page_number+'-area-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Area</b></button>'+
+			   			'</th><th>'+
 			   				'<button  value="'+result.page_number+'-ipAddress-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>IP Address</b></button>'+
 			   			'</th><th>'+
 			   				'<button  value="'+result.page_number+'-serialNo-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Serial No</b></button>'+
@@ -321,7 +329,9 @@
 			   			'</th><th>'+
 			   				'<button  value="'+result.page_number+'-status-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Ping Status</b></button>'+
 			   			'</th>';
-		   			
+					if(showPush){
+						table_header +='<th><b>Sync Employees To Device</b></th>';
+					}
 					if(showUpdate || showDelete){
 						table_header +='<th><b> Actions</b></th>';
 					}
@@ -345,6 +355,11 @@
             	 	}else{
             	 		table_data +=  '<td>' + " " + '</td>';
             	 	}
+            	 	if(null != customer.area){
+            	 		table_data += '<td>' + customer.area.name + '</td>';
+            	 	}else{
+            	 		table_data +=  '<td>' + " " + '</td>';
+            	 	}
 	               	 if(null != customer.ipAddress){
 	            	 		table_data += '<td>' + customer.ipAddress + '</td>';
 	            	 	}else{
@@ -363,6 +378,9 @@
 	           	 	}
 	           	 	table_data += '<td> <img alt="No Image" src="/assets/images/'+customer.status+'.jpg" width="30px""> </td>';
 	           	 	
+	           	    if(showPush){
+						table_data +='<th><a href="/mata-to-device-sync/'+ customer.id +'" class="btn btn-primary"><i class="las la-upload"></i></a></th>';
+					}
 					if(showUpdate){
 						table_data +='<th><a href="/device/edit/'+ customer.id +'" class="btn btn-primary" ><i class="las la-edit"></i></a>';
 					}

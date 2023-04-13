@@ -29,8 +29,10 @@ import com.eikona.tech.constants.DailyAttendanceConstants;
 import com.eikona.tech.constants.NumberConstants;
 import com.eikona.tech.dto.PaginationDto;
 import com.eikona.tech.entity.DailyReport;
+import com.eikona.tech.entity.Organization;
 import com.eikona.tech.entity.Transaction;
 import com.eikona.tech.repository.DailyAttendanceRepository;
+import com.eikona.tech.repository.OrganizationRepository;
 import com.eikona.tech.repository.TransactionRepository;
 import com.eikona.tech.service.DailyAttendanceService;
 import com.eikona.tech.util.CalendarUtil;
@@ -50,6 +52,9 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	private TransactionRepository transactionRepository;
 	
 	@Autowired
+	private OrganizationRepository organizationRepository;
+	
+	@Autowired
 	private CalendarUtil calendarUtil;
 	
 	@Value("${dailyreport.autogenerate.enabled}")
@@ -62,7 +67,11 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 			SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
 			Date yesterday=calendarUtil.getPreviousDate(new Date(), -1, 0, 0,0);
 			String date=inputFormat.format(yesterday);
-			generateDailyAttendance(date,date,"Tata Steel Plant Meramandali");
+			List<Organization> orgList=organizationRepository.findAllByIsDeletedFalse();
+			for(Organization org:orgList) {
+				generateDailyAttendance(date,date,org.getName());
+			}
+			
 		}
 		
 	}
@@ -107,7 +116,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 					DailyReport dailyReport = null;
 					
 					Date currDate = format.parse(transaction.getPunchDateStr());
-					if((transaction.getOrganization().contains("ESL") || transaction.getOrganization().contains("NMDC") || transaction.getOrganization().contains("Meramandali")) && transaction.getPunchDate().getHours() < 8) {
+					if((transaction.getOrganization().contains("Angul") || transaction.getOrganization().contains("Kalinganagar") || transaction.getOrganization().contains("Meramandali")) && transaction.getPunchDate().getHours() < 8) {
 						
 						Calendar currDateCal = Calendar.getInstance();
 						currDateCal.setTime(currDate);
@@ -162,21 +171,11 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 						dailyReport.setEmpInLocation(transaction.getDeviceName());
 						dailyReport.setAttendanceStatus("Present");
 						String city = "";
-						if(transaction.getDeviceName().contains("HYD")) {
-							city = "HYDERABAD";
-						}else if(transaction.getDeviceName().contains("NOIDA")) {
-							city = "NOIDA";
-						}else if(transaction.getDeviceName().contains("MUMBAI")) {
-							city = "MUMBAI";
-						}else if(transaction.getDeviceName().contains("SBG")) {
-							city = "HOSUR";
-						}else if(transaction.getDeviceName().contains("TEPP")) {
-							city = "HOSUR";
-						}else if(transaction.getDeviceName().contains("ESL") || transaction.getOrganization().contains("NMDC") 
+						 if(transaction.getDeviceName().contains("Angul") || transaction.getOrganization().contains("Kalinganagar") 
 								|| transaction.getOrganization().contains("Meramandali")) {
-							city = "Bokaro";
-							if(transaction.getOrganization().contains("NMDC"))
-								city = "Nagarnar";
+							city = "Angul";
+							if(transaction.getOrganization().contains("Kalinganagar"))
+								city = "Kalinganagar";
 							else if(transaction.getOrganization().contains("Meramandali")) {
 								city = "Meramandali";
 							}

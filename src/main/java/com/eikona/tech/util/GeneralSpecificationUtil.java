@@ -146,5 +146,12 @@ public class GeneralSpecificationUtil<T> {
 			return cb.equal(root.get(obj).get(field), value);
 		};
 	}
-
+	public Specification<T> foreignKeyTripleSpecification(String value, String obj, String secondObj, String thirdObj, String field){
+		return (root, query, cb) -> {
+			if (value == null || value.isEmpty() || NumberConstants.STRING_ZERO.equalsIgnoreCase(value)) {
+				return cb.conjunction();
+			}
+			return cb.like(cb.lower(root.join(obj).join(secondObj).join(thirdObj).get(field)), ApplicationConstants.DELIMITER_PERCENTAGE + value + ApplicationConstants.DELIMITER_PERCENTAGE);
+		};
+	}
 }

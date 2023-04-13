@@ -17,4 +17,6 @@ public interface DepartmentRepository extends DataTablesRepository<Department, L
 
 	List<Department> findByOrganizationAndIsDeletedFalse(Organization organization);
 
+	List<Department> findAllByIsDeletedFalseAndOrganization(Organization organization);
+
 }

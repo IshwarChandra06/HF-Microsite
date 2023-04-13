@@ -20,8 +20,12 @@ import com.eikona.tech.constants.AreaConstants;
 import com.eikona.tech.constants.DeviceConstants;
 import com.eikona.tech.constants.NumberConstants;
 import com.eikona.tech.dto.PaginationDto;
+import com.eikona.tech.entity.Area;
 import com.eikona.tech.entity.Device;
+import com.eikona.tech.entity.Employee;
 import com.eikona.tech.repository.DeviceRepository;
+import com.eikona.tech.repository.EmployeeRepository;
+import com.eikona.tech.service.ActionService;
 import com.eikona.tech.service.DeviceService;
 import com.eikona.tech.util.GeneralSpecificationUtil;
 
@@ -30,6 +34,12 @@ public class DeviceServiceImpl implements DeviceService {
 
 	@Autowired
 	private DeviceRepository deviceRepository;
+	
+	@Autowired
+	private EmployeeRepository employeeRepository;
+	
+	@Autowired
+	private ActionService actionService;
 
 	@Autowired
 	private GeneralSpecificationUtil<Device> generalSpecification;
@@ -148,6 +158,30 @@ public class DeviceServiceImpl implements DeviceService {
 
 		Page<Device> page = deviceRepository.findAll(isdeleted.and(idSpc).and(nameSpc).and(ipSpc).and(orgSpc), pageable);
 		return page;
+	}
+
+	@Override
+	public void employeeSyncFromMataToDevice(long id) {
+
+		Device device = getById(id);
+		List<Area> areaList = new ArrayList<>();
+		areaList.add(device.getArea());
+		long empCount = employeeRepository.countEmployeeAndIsDeletedFalseCustom(device.getArea().getId());
+		int limit = NumberConstants.THOUSAND;
+		int totalPage = (int) (empCount / limit);
+
+		for (int i = NumberConstants.ZERO; i <= totalPage; i++) {
+			Pageable paging = PageRequest.of(i, limit, Sort.by(ApplicationConstants.ID).ascending());
+			List<Employee> employeeList = employeeRepository
+					.findByAreaIdAndIsDeletedFalseCustom(device.getArea().getId(), paging);
+			for (Employee employee : employeeList) {
+				actionService.employeeDeviceAction(device, employee, ApplicationConstants.SYNC,
+						ApplicationConstants.ACCESS_TYPE_APP);
+			}
+		}
+
+	
+		
 	}
 	
 }

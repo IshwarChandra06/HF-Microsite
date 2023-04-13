@@ -9,6 +9,7 @@ import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -33,14 +34,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.eikona.tech.dto.PaginationDto;
+import com.eikona.tech.entity.Area;
 import com.eikona.tech.entity.Employee;
 import com.eikona.tech.entity.User;
+import com.eikona.tech.repository.AreaRepository;
 import com.eikona.tech.repository.DepartmentRepository;
 import com.eikona.tech.repository.DesignationRepository;
 import com.eikona.tech.repository.EmployeeRepository;
 import com.eikona.tech.repository.UserRepository;
 import com.eikona.tech.service.EmployeeService;
 import com.eikona.tech.service.OrganizationService;
+import com.eikona.tech.service.impl.model.SchedulerServiceImpl;
 import com.eikona.tech.util.ExportEmployee;
 import com.eikona.tech.util.ImageProcessingUtil;
 
@@ -69,15 +73,38 @@ public class EmployeeController {
 	private DesignationRepository designationRepository;
 	
 	@Autowired
+	private AreaRepository areaRepository;
+	
+	@Autowired
 	private ExportEmployee exportEmployee;
+	
+	@Autowired
+	private SchedulerServiceImpl schedulerServiceImpl;
 	
 	@GetMapping("/employee")
 	@PreAuthorize("hasAuthority('employee_view')")
 	public String employeeList(Model model) {
 		return "employee/employee_list";
 	}
-	
-
+	@GetMapping("/update-area")
+	public String updateArea(Model model,Principal principal) {
+		User user = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
+		List<Employee>empList=employeeRepository.findAllByIsDeletedFalseAndOrganization(user.getOrganization());
+		List<Area> areaList=areaRepository.findByOrganizationAndIsDeletedFalse(user.getOrganization());
+		for(Employee emp:empList) {
+			emp.setArea(areaList);
+			employeeRepository.save(emp);
+		}
+		return "employee/employee_list";
+	}
+	@GetMapping("/employee-push-test")
+	public void employeePushToAllDevice() {
+		schedulerServiceImpl.autoSyncEmployeeFromMataToDevice();
+	}
+	@GetMapping("/pending-push-test")
+	public void pendingEmployeePushToAllDevice() {
+		schedulerServiceImpl.syncPendingDataFromMataToDevice();
+	}
 	// Import Employee
 	@GetMapping("/import/employee-list")
 	@PreAuthorize("hasAuthority('employee_import')")
@@ -87,25 +114,25 @@ public class EmployeeController {
 
 	@PostMapping("/upload/employee-list/excel")
 	@PreAuthorize("hasAuthority('employee_import')")
-	public String uploadEmployeeList(@RequestParam("uploadfile") MultipartFile file, Model model) {
-		String message = employeeService.storeEmployeeList(file);
+	public String uploadEmployeeList(@RequestParam("uploadfile") MultipartFile file, Model model,Principal principal) {
+		String message = employeeService.storeEmployeeList(file,principal);
 		model.addAttribute("message", message);
 		return "multipartfile/uploadEmployeeList";
 	}
 	// Import Employee
-			@GetMapping("/import/employee-delete-list")
-			@PreAuthorize("hasAuthority('employee_import')")
-			public String importEmployeeDeleteList() {
-				return "multipartfile/uploadEmployeeDeleteList";
-			}
+	@GetMapping("/import/employee-delete-list")
+	@PreAuthorize("hasAuthority('employee_import')")
+	public String importEmployeeDeleteList() {
+		return "multipartfile/uploadEmployeeDeleteList";
+	}
 
-			@PostMapping("/upload/employee-delete-list/excel")
-			@PreAuthorize("hasAuthority('employee_import')")
-			public String uploadEmployeeDeleteList(@RequestParam("uploadfile") MultipartFile file, Model model) {
-				String message = employeeService.deleteEmployeeList(file);
-				model.addAttribute("message", message);
-				return "multipartfile/uploadEmployeeDeleteList";
-			}
+	@PostMapping("/upload/employee-delete-list/excel")
+	@PreAuthorize("hasAuthority('employee_import')")
+	public String uploadEmployeeDeleteList(@RequestParam("uploadfile") MultipartFile file, Model model) {
+		String message = employeeService.deleteEmployeeList(file);
+		model.addAttribute("message", message);
+		return "multipartfile/uploadEmployeeDeleteList";
+	}
 	// Import Image
 	@GetMapping("/employee/new")
 	@PreAuthorize("hasAuthority('employee_create')")
@@ -181,6 +208,29 @@ public class EmployeeController {
 	public String deleteEmployee(@PathVariable(value = "id") long id, Principal principal) {
 		this.employeeService.deleteById(id, principal);
 		return "redirect:/employee";
+	}
+	
+	@GetMapping("/employee-to-area/association/{id}")
+	@PreAuthorize("hasAuthority('employee_area_association')")
+	public String employeeAreaAssociation(@PathVariable(value = "id") long id, Model model, Principal principal) {
+
+		User user = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
+
+		List<Area> areaList = areaRepository.findByOrganizationAndIsDeletedFalse(user.getOrganization());
+		model.addAttribute("listArea", areaList);
+		Employee employee = employeeService.getById(id);
+		model.addAttribute("employee", employee);
+		model.addAttribute("id", id);
+		return "employee/employee_area";
+	}
+
+	@PostMapping("/employee-to-area/association/save")
+	@PreAuthorize("hasAuthority('employee_area_association')")
+	public String saveEmployeeAreaAssociation(@ModelAttribute("employee") Employee employee, Long id) {
+		
+		employeeService.saveEmployeeAreaAssociation(employee, id);
+		return "redirect:/employee";
+
 	}
 	
 	@RequestMapping(value = "/api/search/employee", method = RequestMethod.GET)

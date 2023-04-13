@@ -95,7 +95,19 @@ public class Transaction implements Serializable{
 	private String enrollStatus;
 	
 	@Column
+	private String maskStatus;
+	
+	@Column
+	private String searchScore;
+	
+	@Column
+	private String livenessScore;
+	
+	@Column
 	private String grade;
+	
+	@Column
+	private String area;
 	
 	public String getEnrollStatus() {
 		return enrollStatus;
@@ -309,6 +321,38 @@ public class Transaction implements Serializable{
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	public String getMaskStatus() {
+		return maskStatus;
+	}
+
+	public void setMaskStatus(String maskStatus) {
+		this.maskStatus = maskStatus;
+	}
+
+	public String getSearchScore() {
+		return searchScore;
+	}
+
+	public void setSearchScore(String searchScore) {
+		this.searchScore = searchScore;
+	}
+
+	public String getLivenessScore() {
+		return livenessScore;
+	}
+
+	public void setLivenessScore(String livenessScore) {
+		this.livenessScore = livenessScore;
+	}
+
+	public String getArea() {
+		return area;
+	}
+
+	public void setArea(String area) {
+		this.area = area;
 	}
 
 }
