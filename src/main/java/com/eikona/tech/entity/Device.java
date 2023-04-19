@@ -225,9 +225,9 @@ public class Device extends Auditable<String> implements Serializable {
 			
 			long status = date.getTime() - lastonline.getTime();
 			
-			if(status<900000) {
+			if(status<120000) {
 				return "Green";
-			}else if(status<3600000) {
+			}else if(status<900000) {
 				return "Amber";
 			}else {
 				return "Red";

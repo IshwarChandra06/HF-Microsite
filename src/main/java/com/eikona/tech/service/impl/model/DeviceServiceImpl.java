@@ -119,9 +119,9 @@ public class DeviceServiceImpl implements DeviceService {
 					
 					long mileseconds = date.getTime() - lastonline.getTime();
 					
-					if("active".equalsIgnoreCase(status) && mileseconds<=900000) {
+					if("active".equalsIgnoreCase(status) && mileseconds<=120000) {
 						newDeviceList.add(device);
-					}else if("inactive".equalsIgnoreCase(status) && mileseconds>900000) {
+					}else if("inactive".equalsIgnoreCase(status) && mileseconds>120000) {
 						newDeviceList.add(device);
 					}
 					
@@ -161,19 +161,19 @@ public class DeviceServiceImpl implements DeviceService {
 	}
 
 	@Override
-	public void employeeSyncFromMataToDevice(long id) {
+	public void employeeSyncFromMataToDevice(long id, String orgName) {
 
 		Device device = getById(id);
 		List<Area> areaList = new ArrayList<>();
 		areaList.add(device.getArea());
-		long empCount = employeeRepository.countEmployeeAndIsDeletedFalseCustom(device.getArea().getId());
+		long empCount = employeeRepository.countEmployeeAndIsDeletedFalseCustom(orgName,device.getArea().getId());
 		int limit = NumberConstants.THOUSAND;
 		int totalPage = (int) (empCount / limit);
 
 		for (int i = NumberConstants.ZERO; i <= totalPage; i++) {
 			Pageable paging = PageRequest.of(i, limit, Sort.by(ApplicationConstants.ID).ascending());
 			List<Employee> employeeList = employeeRepository
-					.findByAreaIdAndIsDeletedFalseCustom(device.getArea().getId(), paging);
+					.findByIsDeletedFalseCustom(orgName,device.getArea().getId(), paging);
 			for (Employee employee : employeeList) {
 				actionService.employeeDeviceAction(device, employee, ApplicationConstants.SYNC,
 						ApplicationConstants.ACCESS_TYPE_APP);

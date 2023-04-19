@@ -2,6 +2,7 @@ package com.eikona.tech.service.impl.hfsecurity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,7 @@ public class HFSecurityListenerServiceImpl {
 		
 	}
 
-	public void saveTransactionInfoFromResponse(String ipAddress, String deviceKey, String time, String type,
+	public void saveTransactionInfoFromResponse(String deviceKey, String time, String type,
 			 String searchScore, String livenessScore, String mask,
 			String imgBase64, String personId) {
 		
@@ -62,16 +63,21 @@ public class HFSecurityListenerServiceImpl {
 		if(!("STRANGERBABY".equalsIgnoreCase(personId)))
 		 transaction.setEmployeeCode (personId);
 		
-		Employee employee = employeeRepository.findByEmpId(personId);
-		Device device = deviceRepository.findBySerialNoAndIsDeletedFalse(deviceKey);
+//		List<Transaction> transactionList=transactionRepository.findByPunchDateAndEmpIdCustom(new Date(Long.valueOf(time)),personId);
 		
-		setEmployeeDetails(transaction, employee);
+//		if(transactionList.isEmpty()) {
+		   setBasicTransactionDetails(time, type,searchScore, livenessScore, imgBase64,mask, transaction);
+			
+			Employee employee = employeeRepository.findByEmpId(personId);
+			Device device = deviceRepository.findBySerialNoAndIsDeletedFalse(deviceKey);
+			
+			setEmployeeDetails(transaction, employee);
+			
+			setDeviceDetails(transaction, device);
+			
+			transactionRepository.save(transaction);
+//		}
 		
-		setDeviceDetails(transaction, device);
-		
-		setBasicTransactionDetails(time, type,searchScore, livenessScore, imgBase64,mask, transaction);
-		
-		transactionRepository.save(transaction);
 	}
 
 	private void setBasicTransactionDetails(String time, String type,  String searchScore,

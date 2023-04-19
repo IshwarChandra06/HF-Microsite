@@ -33,6 +33,8 @@ public interface DeviceService {
 	
 	PaginationDto<Device> searchByField(Long id, String name, String ipAddress, String status, int pageno, String sortField, String sortDir, String orgName);
 	
-	void employeeSyncFromMataToDevice(long id);
+//	void employeeSyncFromMataToDevice(long id);
+	
+	void employeeSyncFromMataToDevice(long id, String orgName);
 	
 }

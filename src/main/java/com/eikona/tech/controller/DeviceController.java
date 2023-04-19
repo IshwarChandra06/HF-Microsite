@@ -20,14 +20,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.eikona.tech.dto.PaginationDto;
 import com.eikona.tech.entity.Device;
+import com.eikona.tech.entity.Employee;
 import com.eikona.tech.entity.Organization;
 import com.eikona.tech.entity.User;
 import com.eikona.tech.repository.AreaRepository;
+import com.eikona.tech.repository.EmployeeRepository;
 import com.eikona.tech.repository.OrganizationRepository;
 import com.eikona.tech.repository.UserRepository;
 import com.eikona.tech.service.AreaService;
 import com.eikona.tech.service.DeviceService;
 import com.eikona.tech.service.impl.model.SchedulerServiceImpl;
+import com.eikona.tech.util.HFSecurityDeviceUtil;
 
 @Controller
 public class DeviceController {
@@ -48,7 +51,13 @@ public class DeviceController {
 	private AreaRepository areaRepository;
 	
 	@Autowired
+	private EmployeeRepository employeeRepository;
+	
+	@Autowired
 	private SchedulerServiceImpl schedulerServiceImpl;
+	
+	@Autowired
+	private HFSecurityDeviceUtil hFSecurityDeviceUtil;
 	
 	@GetMapping("/device")
 	@PreAuthorize("hasAuthority('device_view')")
@@ -145,11 +154,35 @@ public class DeviceController {
 		PaginationDto<Device> dtoList = deviceService.searchByField(id, name, ipAddress, status, pageno, sortField, sortDir, orgName);
 		return dtoList;
 	}
-	
 	@GetMapping("/mata-to-device-sync/{id}")
-	@PreAuthorize("hasAuthority('mata_to_device_sync')")
-	public String employeeSyncFromMataToDevice(@PathVariable(value = "id") long id) {
-		deviceService.employeeSyncFromMataToDevice(id);
+//	@PreAuthorize("hasAuthority('mata_to_device_sync')")
+	public String employeeSyncFromMataToDeviceSync(@PathVariable(value = "id") long id,Principal principal) {
+		User user = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
+		String orgName = (null == user.getOrganization()? null: user.getOrganization().getName());
+		deviceService.employeeSyncFromMataToDevice(id,orgName);
 		return "redirect:/device";
+	}
+	@GetMapping("/mata-to-device-manual-sync/{id}")
+//	@PreAuthorize("hasAuthority('mata_to_device_sync')")
+	public String employeeSyncFromMataToDevice(@PathVariable(value = "id") long id, Principal principal) {
+		User user = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
+		String orgName = (null == user.getOrganization()? null: user.getOrganization().getName());
+		List<Employee> employeeList=employeeRepository.findAllByIsDeletedFalseAndOrganizationAndArea(orgName);
+		Device device=deviceService.getById(id);
+		for(Employee employee:employeeList) {
+			hFSecurityDeviceUtil.addEmployeeToHFDevice(employee, device);
+			hFSecurityDeviceUtil.addEmployeeFaceToHFDevice(employee, device);
+		}
+		return "redirect:/device";
+	}
+	
+	@GetMapping("/delete-person-from-device/{id}")
+	public String deleteAllEmployeeFromDevice(@PathVariable(value = "id") long id) {
+		Device device=deviceService.getById(id);
+		boolean response=hFSecurityDeviceUtil.deleteEmployeeFromHFDevice("-1", device);
+		if(response)
+		 return "All Persons are Deleted Successfully!!";
+		else
+		 return "Failed!!";
 	}
 }

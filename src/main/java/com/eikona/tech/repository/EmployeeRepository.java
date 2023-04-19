@@ -40,6 +40,9 @@ public interface EmployeeRepository extends DataTablesRepository<Employee, Long>
 	@Query("Select e from com.eikona.tech.entity.Employee e where e.isDeleted=false and e.organization.name=:org")
 	List<Employee> findAllByIsDeletedFalseAndOrganization(String org);
 	
+	@Query("Select e from com.eikona.tech.entity.Employee e where e.isDeleted=false and e.organization.name=:org and NOT(e.area IS EMPTY)")
+	List<Employee> findAllByIsDeletedFalseAndOrganizationAndArea(String org);
+	
 	@Query("Select e from com.eikona.tech.entity.Employee e where e.isDeleted=false and e.empId like %:empId")
 	Employee findByEmpIdCustom(String empId);
 	
@@ -50,11 +53,13 @@ public interface EmployeeRepository extends DataTablesRepository<Employee, Long>
 
 	List<Employee> findAllByIsDeletedFalseAndIsSyncFromDeviceTrue();
 
-	@Query("select e from com.eikona.tech.entity.Employee e JOIN e.area as a where e.isDeleted = false and a.id = :id and is_sync=false and is_face_sync=false")
-	List<Employee> findByAreaIdAndIsDeletedFalseCustom(Long id, Pageable paging);
+	@Query("select e from com.eikona.tech.entity.Employee e JOIN e.area as a where e.isDeleted = false and e.isSync=false and e.isFaceSync=false and e.organization.name=:org"
+			+ " and a.id = :id")
+	List<Employee> findByIsDeletedFalseCustom(String org,Long id, Pageable paging);
 
-	@Query("select count(e.id) from com.eikona.tech.entity.Employee e JOIN e.area as a where e.isDeleted = false and a.id = :id and is_sync=false and is_face_sync=false")
-	long countEmployeeAndIsDeletedFalseCustom(Long id);
+	@Query("select count(e.id) from com.eikona.tech.entity.Employee e JOIN e.area as a where e.isDeleted = false and e.isSync=false and e.isFaceSync=false and e.organization.name=:org"
+			+" and a.id = :id")
+	long countEmployeeAndIsDeletedFalseCustom(String org, Long id);
 
 	List<Employee> findAllByIsDeletedFalseAndOrganization(Organization organization);
 	

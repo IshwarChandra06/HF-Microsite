@@ -33,4 +33,7 @@ public interface TransactionRepository extends DataTablesRepository<Transaction,
 			+ "where tr.punchDateStr =:dateStr and tr.deviceName=:device and tr.name='Unregistered' GROUP BY tr.organization")
 	Long findUnregisterCountByDateAndDeviceCustom(String dateStr, String device);
 
+//	@Query("SELECT tr FROM com.eikona.tech.entity.Transaction as tr where tr.punchDate =:date and tr.empId=:personId")
+//	List<Transaction> findByPunchDateAndEmpIdCustom(Date date, String personId);
+
 }

@@ -47,12 +47,11 @@ public class DashboardWebsocket {
 		
 		//HFSecurity Eventlog
 		@PostMapping(path ="/hfsecurity/eventlog")
-		public String hfSecurityEventLogInfo(@RequestParam("ip") String ipAddress,
-				@RequestParam("deviceKey") String deviceKey, @RequestParam("time") String time, @RequestParam("type") String type, 
+		public String hfSecurityEventLogInfo(@RequestParam("deviceKey") String deviceKey, @RequestParam("time") String time, @RequestParam("type") String type, 
 				@RequestParam("searchScore") String searchScore,@RequestParam("livenessScore") String livenessScore,@RequestParam("personId") String personId,
 				@RequestParam("mask") String mask,@RequestParam("imgBase64") String imgBase64) throws ParseException {
 			
-			hfSecurityService.saveTransactionInfoFromResponse(ipAddress,deviceKey,time,type,searchScore,livenessScore,mask,imgBase64,personId);
+			hfSecurityService.saveTransactionInfoFromResponse(deviceKey,time,type,searchScore,livenessScore,mask,imgBase64,personId);
 			
 			System.out.println("Event log received!!");
 			JSONObject response = new JSONObject();

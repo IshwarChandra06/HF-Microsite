@@ -78,9 +78,9 @@ public class DashboardController {
 				
 				long mileseconds = date.getTime() - lastonline.getTime();
 				
-				if(mileseconds<=900000){
+				if(mileseconds<=120000){
 					onlineDeviceList.add(device);
-				}else if(mileseconds>900000) {
+				}else if(mileseconds>120000) {
 					offlineDeviceList.add(device);
 				}
 			}
@@ -120,7 +120,7 @@ public class DashboardController {
 						Date lastonline = device.getLastOnline();
 						
 						long mileseconds = date.getTime() - lastonline.getTime();
-						if(mileseconds<=900000){
+						if(mileseconds<=120000){
 							onlineDeviceList.add(device);
 						}
 					}

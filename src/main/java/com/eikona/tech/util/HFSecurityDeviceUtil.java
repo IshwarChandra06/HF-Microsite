@@ -88,6 +88,8 @@ public class HFSecurityDeviceUtil {
 		}
 		employeeRepository.saveAll(empList);
 	}
+	
+	
 
 	public void addEmployeeFaceInHF() {
 
