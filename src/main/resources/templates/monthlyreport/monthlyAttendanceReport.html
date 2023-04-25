@@ -350,7 +350,7 @@
 			function tableData(result) {
 				var table_data ='';
 				$.each(result.dataList, function(i, customer){
-					table_data +='<tr>' +
+					table_data +='<tr class="text-center">' +
 						'<td>' + customer.empId + '</td>' +
 						'<td>' + ((null != customer.empName)?customer.empName.toLocaleUpperCase():'')+ '</td>' +
 						'<td>' + ((null != customer.department)?customer.department:'')+ '</td>' +

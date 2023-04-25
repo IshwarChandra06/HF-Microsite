@@ -191,6 +191,8 @@ public class MonthlyAttendanceReportServiceImpl {
 						dataList.add(TSPConstants.ABSENT);
 					else if(TSPConstants.PRESENT.equalsIgnoreCase(dailyAttendance.getAttendanceStatus()))
 						dataList.add("P");
+					else if(ApplicationConstants.DELIMITER_HYPHEN.equalsIgnoreCase(dailyAttendance.getAttendanceStatus()))
+						dataList.add("-");
 					else if(null == dailyAttendance.getAttendanceStatus() )
 							dataList.add(ApplicationConstants.DELIMITER_HYPHEN);
 					
@@ -556,8 +558,7 @@ public class MonthlyAttendanceReportServiceImpl {
 							inTimeList.add(dailyAttendance.getEmpInTime());
 							outTimeList.add(dailyAttendance.getEmpOutTime());
 						}
-							
-						else if(null == dailyAttendance.getAttendanceStatus()) {
+						else{
 							dataList.add(ApplicationConstants.DELIMITER_HYPHEN);
 							inTimeList.add(ApplicationConstants.DELIMITER_HYPHEN);
 							outTimeList.add(ApplicationConstants.DELIMITER_HYPHEN);

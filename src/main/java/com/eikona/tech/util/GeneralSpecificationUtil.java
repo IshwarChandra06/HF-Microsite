@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.eikona.tech.constants.ApplicationConstants;
 import com.eikona.tech.constants.NumberConstants;
+import com.eikona.tech.entity.DailyReport;
 
 @Component
 public class GeneralSpecificationUtil<T> {
@@ -152,6 +153,15 @@ public class GeneralSpecificationUtil<T> {
 				return cb.conjunction();
 			}
 			return cb.like(cb.lower(root.join(obj).join(secondObj).join(thirdObj).get(field)), ApplicationConstants.DELIMITER_PERCENTAGE + value + ApplicationConstants.DELIMITER_PERCENTAGE);
+		};
+	}
+
+	public Specification<T> stringEqualSpecification(String value, String field) {
+		return (root, query, cb) -> {
+			if (value == null || value.isEmpty()) {
+				return cb.conjunction();
+			}
+			return cb.equal(cb.lower(root.<String>get(field)), value);
 		};
 	}
 }

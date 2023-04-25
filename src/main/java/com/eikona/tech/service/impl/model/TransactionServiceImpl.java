@@ -97,7 +97,7 @@ public class TransactionServiceImpl implements TransactionService {
 				TransactionConstants.PUNCH_DATE);
 		Specification<Transaction> empIdSpec = generalSpecification.stringSpecification(employeeId, TransactionConstants.EMP_ID);
 		Specification<Transaction> empNameSpec = generalSpecification.stringSpecification(employeeName, ApplicationConstants.NAME);
-		Specification<Transaction> devSpec = generalSpecification.stringSpecification(device, TransactionConstants.DEVICE_NAME);
+		Specification<Transaction> devSpec = generalSpecification.stringEqualSpecification(device, TransactionConstants.DEVICE_NAME);
 		Specification<Transaction> deptSpec = generalSpecification.stringSpecification(department,
 				TransactionConstants.DEPARTMENT);
 		Specification<Transaction> desiSpec = generalSpecification.stringSpecification(designation,

@@ -13,7 +13,7 @@ import com.eikona.tech.entity.DailyReport;
 public interface DailyAttendanceRepository extends DataTablesRepository<DailyReport, Long> {
 
 	@Query("SELECT  dr FROM com.eikona.tech.entity.DailyReport as dr where "
-				+ " dr.date >= :sDate and dr.date <= :eDate and dr.company = :company")
+				+ " dr.date >= :sDate and dr.date <= :eDate and dr.organization = :company")
 		List<DailyReport> findByDateAndOrganization(Date sDate,Date eDate, String company);
 
 	DailyReport findByEmpIdAndDateAndOrganization(String trim, Date currDate, String organization);
@@ -21,6 +21,13 @@ public interface DailyAttendanceRepository extends DataTablesRepository<DailyRep
 	@Query("SELECT  dr FROM com.eikona.tech.entity.DailyReport as dr where dr.empId = :empId and dr.date between :sDate and :eDate "
 			+"order by dr.date asc")
 	List<DailyReport> findDetailsByDateCustom(String empId, Date sDate, Date eDate);
+
+	@Query("SELECT  dr.empId FROM com.eikona.tech.entity.DailyReport as dr where "
+			+ " dr.date >= :sDate and dr.date <= :eDate and dr.organization = :company")
+	List<String> findByDateAndOrganizationCustom(Date sDate,Date eDate, String company);
+
+	DailyReport findByEmpIdAndDateAndOrganizationAndPunchInDevice(String empId, Date currDate, String organization,
+			String punchStatus);
 	
 
 }

@@ -45,7 +45,7 @@ public class ExportDailyReports {
 	private CalendarUtil calendarUtil;
  
 	public void fileExportBySearchValue(HttpServletResponse response,String sDate, String eDate,
-			String employeeName, String employeeId, String designation, String department, String status,String shift, String flag,
+			String employeeName, String employeeId, String designation, String department, String status,String shift, String punchStatus, String flag,
 			String orgName) throws ParseException, IOException {
 
 		Date startDate = null;
@@ -62,13 +62,13 @@ public class ExportDailyReports {
 		}
 		
 		List<DailyReport> dailyAttendanceList = getListOfDailyAttendance(employeeName, employeeId, designation,
-				department, status, startDate, endDate, orgName,shift);
+				department, status, startDate, endDate, orgName,shift,punchStatus);
 		
 		excelGenerator(response, dailyAttendanceList);
 	}
 	
 	private List<DailyReport> getListOfDailyAttendance(String employeeName, String employeeId, String designation,
-			String department, String status, Date startDate, Date endDate, String orgName,  String shift) {
+			String department, String status, Date startDate, Date endDate, String orgName,  String shift, String punchStatus) {
 		
 		Specification<DailyReport> dateSpec = generalSpecification.dateSpecification(startDate, endDate,ApplicationConstants.DATE);
 		Specification<DailyReport> employeeNameSpec = generalSpecification.stringSpecification(employeeName,DailyAttendanceConstants.EMPLOYEE_NAME);
@@ -78,9 +78,10 @@ public class ExportDailyReports {
     	Specification<DailyReport> statusSpec = generalSpecification.stringSpecification(status,DailyAttendanceConstants.ATTENDANCE_STATUS);
     	Specification<DailyReport> orgSpec = generalSpecification.stringSpecification(orgName, AreaConstants.ORGANIZATION);
     	Specification<DailyReport> shiftSpec = generalSpecification.stringSpecification(shift,DailyAttendanceConstants.SHIFT);
+    	Specification<DailyReport> punchStatusSpec = generalSpecification.stringEqualSpecification(punchStatus,"punchInDevice");
 		
 		List<DailyReport> dailyAttendanceList =dailyAttendanceRepository.findAll(dateSpec.and(employeeNameSpec)
-				.and(employeeIdSpec).and(departmentSpec).and(designationSpec).and(statusSpec).and(orgSpec).and(shiftSpec));
+				.and(employeeIdSpec).and(departmentSpec).and(designationSpec).and(statusSpec).and(orgSpec).and(shiftSpec).and(punchStatusSpec));
 		return dailyAttendanceList;
 	}
 	
@@ -153,6 +154,10 @@ public class ExportDailyReports {
 			cell = row.createCell(columnCount++);
 			cell.setCellValue(dailyAttendance.getAttendanceStatus());
 			cell.setCellStyle(cellStyle);
+			
+			cell = row.createCell(columnCount++);
+			cell.setCellValue(dailyAttendance.getPunchInDevice());
+			cell.setCellStyle(cellStyle);
 
 			cell = row.createCell(columnCount++);
 			cell.setCellValue(dailyAttendance.getDepartment());
@@ -192,6 +197,10 @@ public class ExportDailyReports {
 
 			cell = row.createCell(columnCount++);
 			cell.setCellValue(dailyAttendance.getWorkTime());
+			cell.setCellStyle(cellStyle);
+			
+			cell = row.createCell(columnCount++);
+			cell.setCellValue(dailyAttendance.getOverTimeStr());
 			cell.setCellStyle(cellStyle);
 
 			cell = row.createCell(columnCount++);
@@ -269,6 +278,10 @@ public class ExportDailyReports {
 		cell = row.createCell(columnCount++);
 		cell.setCellValue(HeaderConstants.ATTENDANCE_STATUS);
 		cell.setCellStyle(cellStyle);
+		
+		cell = row.createCell(columnCount++);
+		cell.setCellValue("Punch Status");
+		cell.setCellStyle(cellStyle);
 
 	    cell = row.createCell(columnCount++);
 		cell.setCellValue(HeaderConstants.DEPARTMENT);
@@ -308,6 +321,10 @@ public class ExportDailyReports {
 
 		cell = row.createCell(columnCount++);
 		cell.setCellValue(HeaderConstants.WORK_TIME);
+		cell.setCellStyle(cellStyle);
+		
+		cell = row.createCell(columnCount++);
+		cell.setCellValue(HeaderConstants.OVER_TIME);
 		cell.setCellStyle(cellStyle);
 
 		cell = row.createCell(columnCount++);

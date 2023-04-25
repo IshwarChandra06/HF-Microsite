@@ -113,4 +113,25 @@ public void rebootAllDevices() {
 		
 	}
 }
+@Scheduled(cron="0 0 2 * * *")
+public void updateErrorActionDetails() {
+	
+	List<ActionDetails> actionDetailList = actionDetailsRepository.findByStatus("Error");
+	List<ActionDetails> saveActionDetailList=new ArrayList<ActionDetails>();
+	
+	for(ActionDetails actionDetails:actionDetailList) {
+
+		List<ActionDetails> errorActionDetailList= actionDetailsRepository.findByEmpIdAndDeviceCustom(actionDetails.getAction().getEmployee().getEmpId(), actionDetails.getDevice().getId());
+		
+		if(errorActionDetailList.size()>1) {
+			for(int i=1; i<errorActionDetailList.size(); i++) {
+				ActionDetails errorActionDetails = errorActionDetailList.get(i);
+				errorActionDetails.setStatus("Completed");
+				errorActionDetails.setMessage("Completed");
+				saveActionDetailList.add(errorActionDetails);
+			}
+		}
+	}
+	actionDetailsRepository.saveAll(saveActionDetailList);
+}
 }

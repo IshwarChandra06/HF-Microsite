@@ -29,7 +29,6 @@ import com.eikona.tech.repository.OrganizationRepository;
 import com.eikona.tech.repository.UserRepository;
 import com.eikona.tech.service.AreaService;
 import com.eikona.tech.service.DeviceService;
-import com.eikona.tech.service.impl.model.SchedulerServiceImpl;
 import com.eikona.tech.util.HFSecurityDeviceUtil;
 
 @Controller
@@ -54,9 +53,6 @@ public class DeviceController {
 	private EmployeeRepository employeeRepository;
 	
 	@Autowired
-	private SchedulerServiceImpl schedulerServiceImpl;
-	
-	@Autowired
 	private HFSecurityDeviceUtil hFSecurityDeviceUtil;
 	
 	@GetMapping("/device")
@@ -64,10 +60,7 @@ public class DeviceController {
 	public String deviceList(Model model) {
 		return "device/device_list";
 	}
-	@GetMapping("/keep-online-test")
-	public void keepDeviceOnline() {
-		schedulerServiceImpl.keepDeviceOnline();
-	}
+	
 	@GetMapping("/device/new")
 	@PreAuthorize("hasAuthority('device_create')")
 	public String newDevice(Model model, Principal principal) {

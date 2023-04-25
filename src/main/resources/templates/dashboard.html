@@ -90,7 +90,9 @@
 						<div class="card">
 							<div class="card-body">
 								<h3 class="card-title">Organization Wise Today Attendance</h3>
-								<div id="bar_chart"></div>
+								<div id="bar_chart">
+								<img class="spinner_chart" alt="" src="/assets/images/loading.gif" style="height:120px;margin-top:50px;">
+								</div>
 							</div>
 						</div>
 					</div>
@@ -105,6 +107,7 @@
 						</div>
 						<div class="card-body">
 							<div class="table-responsive realtime-list">
+							<img class="spinner" alt="" src="/assets/images/loading.gif" style="height:40%;margin-top:80px;">
 								<table class="table custom-table mb-0">
 									<thead class="table-header"></thead>
 									<tbody class="table-data"></tbody>
@@ -161,7 +164,7 @@
 					
 					table_data +=tableData;
 				});
-				
+				$(".spinner").hide();
 				$(".table-header").html('').append(table_header);
 				$(".table-data").html('').append(table_data);
 			}
@@ -172,6 +175,7 @@
 		$.ajax({
 			url : '/api/employee-login-chart',
 			success : function(result) {
+				$(".spinner_chart").hide();
 				if(result.length === 0){
 					$("#bar_chart").html('').append("No Data")
 				}else{

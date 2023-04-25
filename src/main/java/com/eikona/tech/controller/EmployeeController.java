@@ -44,7 +44,6 @@ import com.eikona.tech.repository.EmployeeRepository;
 import com.eikona.tech.repository.UserRepository;
 import com.eikona.tech.service.EmployeeService;
 import com.eikona.tech.service.OrganizationService;
-import com.eikona.tech.service.impl.model.SchedulerServiceImpl;
 import com.eikona.tech.util.ExportEmployee;
 import com.eikona.tech.util.ImageProcessingUtil;
 
@@ -78,14 +77,14 @@ public class EmployeeController {
 	@Autowired
 	private ExportEmployee exportEmployee;
 	
-	@Autowired
-	private SchedulerServiceImpl schedulerServiceImpl;
+	
 	
 	@GetMapping("/employee")
 	@PreAuthorize("hasAuthority('employee_view')")
 	public String employeeList(Model model) {
 		return "employee/employee_list";
 	}
+	
 	@GetMapping("/update-area")
 	public String updateArea(Model model,Principal principal) {
 		User user = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
@@ -96,14 +95,6 @@ public class EmployeeController {
 			employeeRepository.save(emp);
 		}
 		return "employee/employee_list";
-	}
-	@GetMapping("/employee-push-test")
-	public void employeePushToAllDevice() {
-		schedulerServiceImpl.autoSyncEmployeeFromMataToDevice();
-	}
-	@GetMapping("/pending-push-test")
-	public void pendingEmployeePushToAllDevice() {
-		schedulerServiceImpl.syncPendingDataFromMataToDevice();
 	}
 	// Import Employee
 	@GetMapping("/import/employee-list")

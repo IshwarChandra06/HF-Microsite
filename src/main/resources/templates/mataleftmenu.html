@@ -50,7 +50,7 @@
 								<li id="daily-report_menu" sec:authorize="hasAuthority('dailyreport_view')"><a href="/daily-reports"><i class="las la-file-alt"></i><span> Daily Report</span> </a></li>
 								<li id="monthly_menu" sec:authorize="hasAuthority('monthlyattendance_view')"><a href="/monthly-attendance/report"><i class="las la-calendar"></i><span> Monthly Report</span> </a></li>
 							<li id="inout_monthly_menu" sec:authorize="hasAuthority('monthlyattendance_view')"><a href="/in-out/monthly-attendance/report"><i class="las la-calendar-check"></i><span> In & Out Monthly Report</span> </a></li>
-							<li class="menu-title" sec:authorize="hasAuthority('action_view')"> 
+							<li class="menu-title" sec:authorize="hasAuthority('action_details_view')"> 
 								<span>Logs</span>
 							</li>
 							    <li id="audit_menu" sec:authorize="hasAuthority('action_view')"><a class="" th:href="@{/action}"><i class="lab la-buysellads"></i><span>Audit</span></a></li>

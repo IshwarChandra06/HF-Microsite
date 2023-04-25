@@ -66,7 +66,6 @@ public class HFSecurityListenerServiceImpl {
 //		List<Transaction> transactionList=transactionRepository.findByPunchDateAndEmpIdCustom(new Date(Long.valueOf(time)),personId);
 		
 //		if(transactionList.isEmpty()) {
-		   setBasicTransactionDetails(time, type,searchScore, livenessScore, imgBase64,mask, transaction);
 			
 			Employee employee = employeeRepository.findByEmpId(personId);
 			Device device = deviceRepository.findBySerialNoAndIsDeletedFalse(deviceKey);
@@ -74,6 +73,8 @@ public class HFSecurityListenerServiceImpl {
 			setEmployeeDetails(transaction, employee);
 			
 			setDeviceDetails(transaction, device);
+			
+			setBasicTransactionDetails(time, type,searchScore, livenessScore, imgBase64,mask, transaction);
 			
 			transactionRepository.save(transaction);
 //		}

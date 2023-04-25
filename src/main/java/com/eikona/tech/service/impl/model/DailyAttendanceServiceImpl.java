@@ -29,9 +29,11 @@ import com.eikona.tech.constants.DailyAttendanceConstants;
 import com.eikona.tech.constants.NumberConstants;
 import com.eikona.tech.dto.PaginationDto;
 import com.eikona.tech.entity.DailyReport;
+import com.eikona.tech.entity.Employee;
 import com.eikona.tech.entity.Organization;
 import com.eikona.tech.entity.Transaction;
 import com.eikona.tech.repository.DailyAttendanceRepository;
+import com.eikona.tech.repository.EmployeeRepository;
 import com.eikona.tech.repository.OrganizationRepository;
 import com.eikona.tech.repository.TransactionRepository;
 import com.eikona.tech.service.DailyAttendanceService;
@@ -55,6 +57,9 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	private OrganizationRepository organizationRepository;
 	
 	@Autowired
+	private EmployeeRepository employeeRepository;
+	
+	@Autowired
 	private CalendarUtil calendarUtil;
 	
 	@Value("${dailyreport.autogenerate.enabled}")
@@ -70,12 +75,61 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 			List<Organization> orgList=organizationRepository.findAllByIsDeletedFalse();
 			for(Organization org:orgList) {
 				generateDailyAttendance(date,date,org.getName());
+				generateNotPunchDailyAttendance(date, date, org.getName());
 			}
 			
 		}
 		
 	}
-	
+public void generateNotPunchDailyAttendance(String sDate, String eDate, String organization) {
+		
+		try {
+			
+			SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			sDate = format.format(inputFormat.parse(sDate));
+			eDate = format.format(inputFormat.parse(eDate));
+			
+			Date startDate = calendarUtil.getConvertedDate(format.parse(sDate), 00, 00, 00);
+			Date endDate = calendarUtil.getConvertedDate(format.parse(eDate), 23, 59, 59);
+			
+			List<String> dailyReportEmpIdList = dailyAttendanceRepository.findByDateAndOrganizationCustom(startDate, endDate, organization);
+			
+			if(dailyReportEmpIdList.isEmpty())
+				dailyReportEmpIdList.add(" ");
+			
+			
+			List<Employee> absentEmployeeList = employeeRepository.findByEmpIdAndIsDeletedFalseCustom(dailyReportEmpIdList, organization);
+			List<DailyReport> dailyReportList = new ArrayList<>();
+			for(Employee employee : absentEmployeeList) {
+				
+				DailyReport dailyReport = new DailyReport();
+				dailyReport.setEmpId(employee.getEmpId().trim());
+				dailyReport.setDateStr(sDate);
+				dailyReport.setDate(startDate);
+				dailyReport.setEmployeeName(employee.getName());
+				dailyReport.setOrganization((null == employee.getOrganization()?"":employee.getOrganization().getName()));
+				dailyReport.setDepartment((null == employee.getDepartment()?"":employee.getDepartment().getName()));
+				dailyReport.setDesignation((null == employee.getDesignation()?"":employee.getDesignation().getName()));
+				dailyReport.setGrade(employee.getGrade());
+				dailyReport.setMobile(employee.getMobile());
+				dailyReport.setEmployeeType("Employee");
+				dailyReport.setUserType("Employee");
+				dailyReport.setPunchInDevice("Not Punched");
+				dailyReport.setAttendanceStatus("-");
+				dailyReport.setMissedOutPunch(false);
+				dailyReportList.add(dailyReport);
+				
+			}
+			
+			dailyAttendanceRepository.saveAll(dailyReportList);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
 	@SuppressWarnings("deprecation")
 	@Override
 	public List<DailyReport> generateDailyAttendance(String sDate, String eDate, String organization) {
@@ -123,8 +177,8 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 						currDateCal.add(Calendar.DAY_OF_MONTH, -1);
 						currDate = currDateCal.getTime();
 						
-						DailyReport dailyReportYesterday = dailyAttendanceRepository.findByEmpIdAndDateAndOrganization(transaction.getEmpId().trim(),
-								currDate, transaction.getOrganization());
+						DailyReport dailyReportYesterday = dailyAttendanceRepository.findByEmpIdAndDateAndOrganizationAndPunchInDevice(transaction.getEmpId().trim(),
+								currDate, transaction.getOrganization(), "Punched");
 						
 						if(null!=dailyReportYesterday) {
 							if(Integer.parseInt(dailyReportYesterday.getEmpInTime().split(":")[0]) < 20) {
@@ -161,9 +215,10 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 						dailyReport.setEmployeeType("Employee");
 						dailyReport.setUserType("Employee");
 						dailyReport.setShift("General");
-						dailyReport.setShiftInTime("08:30:00");
-						dailyReport.setShiftOutTime("17:00:00");
+						dailyReport.setShiftInTime("09:00:00");
+						dailyReport.setShiftOutTime("18:00:00");
 						dailyReport.setMissedOutPunch(true);
+						dailyReport.setPunchInDevice("Punched");
 						dailyReport.setEmpInTime(transaction.getPunchTimeStr());
 						dailyReport.setEmpInTemp(transaction.getTemperature());
 						dailyReport.setEmpInMask(transaction.getWearingMask());
@@ -180,7 +235,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 								city = "Meramandali";
 							}
 							dailyReport.setShiftInTime("09:00:00");
-							dailyReport.setShiftOutTime("17:30:00");
+							dailyReport.setShiftOutTime("18:00:00");
 							
 							int hour = Integer.parseInt(transaction.getPunchTimeStr().split(":")[0]);
 							if(hour <= 7) {
@@ -288,8 +343,11 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 								dailyReport.setEarlyGoing(null);
 							}
 	
-							if (overTime > 0)
+							if (overTime > 0) {
 								dailyReport.setOverTime(overTime);
+								dailyReport.setOverTimeStr(overTime/60+":"+(overTime % 60));
+							}
+								
 							
 							reportMap.put(key, dailyReport);
 						}
@@ -313,7 +371,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 
 	@Override
 	public PaginationDto<DailyReport> searchByField(String sDate, String eDate, String employeeId,
-			String employeeName,String department, String designation, String status,String shift, int pageno,
+			String employeeName,String department, String designation, String status,String shift, String punchStatus, int pageno,
 			String sortField, String sortDir, String orgName) {
 
 		Date startDate = null;
@@ -337,7 +395,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		}
 		
 		Page<DailyReport> page = getDailyAttendancePage(employeeId, employeeName,"", department,
-				designation, pageno, sortField, sortDir, startDate, endDate, status,shift, orgName);
+				designation, pageno, sortField, sortDir, startDate, endDate, status,shift, orgName,punchStatus);
 		List<DailyReport> employeeShiftList = page.getContent();
 
 		sortDir = (ApplicationConstants.ASC.equalsIgnoreCase(sortDir)) ? ApplicationConstants.DESC : ApplicationConstants.ASC;
@@ -349,7 +407,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	
 	private Page<DailyReport> getDailyAttendancePage(String employeeId, String employeeName, String organization,
 			String department, String designation, int pageno, String sortField, String sortDir, Date startDate,
-			Date endDate, String status,String shift, String orgName) {
+			Date endDate, String status,String shift, String orgName, String punchStatus) {
 		Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
 				: Sort.by(sortField).descending();
 
@@ -364,8 +422,9 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		Specification<DailyReport> desiSpec = generalSpecificationDailyAttendance.stringSpecification(designation, DailyAttendanceConstants.DESIGNATION);
 		Specification<DailyReport> statusSpec = generalSpecificationDailyAttendance.stringSpecification(status, DailyAttendanceConstants.ATTENDANCE_STATUS);
 		Specification<DailyReport> shiftSpec = generalSpecificationDailyAttendance.stringSpecification(shift, DailyAttendanceConstants.SHIFT);
+		Specification<DailyReport> punchStatusSpec = generalSpecificationDailyAttendance.stringEqualSpecification(punchStatus,"punchInDevice");
 		Page<DailyReport> page = dailyAttendanceRepository.findAll(statusSpec.and(dateSpec).and(empIdSpec)
-				.and(empNameSpec).and(deptSpec).and(desiSpec).and(userOrgSpec).and(orgSpec).and(shiftSpec), pageable);
+				.and(empNameSpec).and(deptSpec).and(desiSpec).and(userOrgSpec).and(orgSpec).and(shiftSpec).and(punchStatusSpec), pageable);
 		return page;
 	}
 

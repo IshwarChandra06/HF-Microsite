@@ -111,15 +111,21 @@ public class DailyReport implements Serializable {
 
 	@Column
 	private String empOutAccessType;
+	
+	@Column
+	private String punchInDevice;
 
 	@Column
 	private Boolean missedOutPunch;
 
 	@Column
 	private String attendanceStatus;
-
+	
 	@Column
 	private String workTime;
+	
+	@Column
+	private String overTimeStr;
 
 	@Column
 	private Long overTime;
@@ -456,6 +462,22 @@ public class DailyReport implements Serializable {
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	public String getPunchInDevice() {
+		return punchInDevice;
+	}
+
+	public void setPunchInDevice(String punchInDevice) {
+		this.punchInDevice = punchInDevice;
+	}
+
+	public String getOverTimeStr() {
+		return overTimeStr;
+	}
+
+	public void setOverTimeStr(String overTimeStr) {
+		this.overTimeStr = overTimeStr;
 	}
 
 }
