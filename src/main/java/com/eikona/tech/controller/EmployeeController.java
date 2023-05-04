@@ -85,16 +85,16 @@ public class EmployeeController {
 		return "employee/employee_list";
 	}
 	
-	@GetMapping("/update-area")
+	@GetMapping("/update-employee-area")
 	public String updateArea(Model model,Principal principal) {
 		User user = userRepository.findByUserNameAndIsDeletedFalse(principal.getName());
-		List<Employee>empList=employeeRepository.findAllByIsDeletedFalseAndOrganization(user.getOrganization());
+		List<Employee>empList=employeeRepository.findAllByOrganizationAndEmptyAreaCustom(user.getOrganization());
 		List<Area> areaList=areaRepository.findByOrganizationAndIsDeletedFalse(user.getOrganization());
 		for(Employee emp:empList) {
 			emp.setArea(areaList);
 			employeeRepository.save(emp);
 		}
-		return "employee/employee_list";
+		return "redirect:/employee";
 	}
 	// Import Employee
 	@GetMapping("/import/employee-list")

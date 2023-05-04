@@ -61,10 +61,13 @@ public interface EmployeeRepository extends DataTablesRepository<Employee, Long>
 			+" and a.id = :id")
 	long countEmployeeAndIsDeletedFalseCustom(String org, Long id);
 
-	List<Employee> findAllByIsDeletedFalseAndOrganization(Organization organization);
+	@Query("Select e from com.eikona.tech.entity.Employee e where e.isDeleted=false and e.organization= :organization and e.area IS EMPTY")
+	List<Employee> findAllByOrganizationAndEmptyAreaCustom(Organization organization);
 	
 
 	@Query("select e from com.eikona.tech.entity.Employee as e where e.isDeleted=false and e.empId NOT IN :empIds and e.organization.name=:organization")
 	List<Employee> findByEmpIdAndIsDeletedFalseCustom(List<String> empIds, String organization);
-	
+
+	List<Employee> findAllByIsDeletedFalseAndOrganization(Organization organization);
+
 }

@@ -39,6 +39,7 @@ public class ImageProcessingUtil {
 	
 	@Autowired
 	private ImageRepository imageRepository;
+	
 
 	public Employee searchEmployee(String empId) {
 		return employeeRepository.findByEmpIdAndIsDeletedFalse(empId);
@@ -85,7 +86,7 @@ public class ImageProcessingUtil {
 		return bytes;
 	}
 
-	public String[] imageProcessing(BufferedImage originalImage, String empId) {
+	public String[] imageProcessing(BufferedImage originalImage, String empId, String orgName) {
 		String[] stringArray = new String[NumberConstants.THREE];
 		try {
 			String writeImageForOrginal = ApplicationConstants.DELIMITER_EMPTY;
@@ -93,14 +94,14 @@ public class ImageProcessingUtil {
 			String writeImageForResize = ApplicationConstants.DELIMITER_EMPTY;
 
 
-			File original = new File(DefaultConstants.EMPLOYEE_ORIGINAL_PATH);
-			writeImageForOrginal = getOriginalImagePath(stringArray, empId, original);
+			File original = new File(orgName+ApplicationConstants.DELIMITER_FORWARD_SLASH+DefaultConstants.EMPLOYEE_ORIGINAL_PATH);
+			writeImageForOrginal = getOriginalImagePath(stringArray, empId, original,orgName);
 
-			File resize = new File(DefaultConstants.EMPLOYEE_RESIZE_PATH);
-			writeImageForResize = getResizeImagePath(stringArray, empId, resize);
+			File resize = new File(orgName+ApplicationConstants.DELIMITER_FORWARD_SLASH+DefaultConstants.EMPLOYEE_RESIZE_PATH);
+			writeImageForResize = getResizeImagePath(stringArray, empId, resize,orgName);
 
-			File thumbnail = new File(DefaultConstants.EMPLOYEE_THUIMBNAIL_PATH);
-			writeImageForThumbnail = getThumbnailImagePath(stringArray, empId, thumbnail);
+			File thumbnail = new File(orgName+ApplicationConstants.DELIMITER_FORWARD_SLASH+DefaultConstants.EMPLOYEE_THUIMBNAIL_PATH);
+			writeImageForThumbnail = getThumbnailImagePath(stringArray, empId, thumbnail,orgName);
 
 			if (null != originalImage) {
 				ImageIO.write(originalImage, ApplicationConstants.FORMAT_JPG, new File(writeImageForOrginal));
@@ -123,9 +124,9 @@ public class ImageProcessingUtil {
 
 	}
 
-	private String getThumbnailImagePath(String[] stringArray,String empId, File thum) {
+	private String getThumbnailImagePath(String[] stringArray,String empId, File thum, String orgName) {
 		String writeImageForEmployee;
-		String thumDirPath = DefaultConstants.EMPLOYEE_THUIMBNAIL_PATH;
+		String thumDirPath = orgName+ApplicationConstants.DELIMITER_FORWARD_SLASH+DefaultConstants.EMPLOYEE_THUIMBNAIL_PATH;
 		if (!thum.exists()) {
 			thum.mkdirs();
 			writeImageForEmployee = stringArray[NumberConstants.TWO] = thumDirPath
@@ -137,9 +138,9 @@ public class ImageProcessingUtil {
 		return writeImageForEmployee;
 	}
 
-	private String getResizeImagePath(String[] stringArray,  String empId, File emp) {
+	private String getResizeImagePath(String[] stringArray,  String empId, File emp, String orgName) {
 		String writeImageForDevice;
-		String empDirPath = DefaultConstants.EMPLOYEE_RESIZE_PATH;
+		String empDirPath = orgName+ApplicationConstants.DELIMITER_FORWARD_SLASH+DefaultConstants.EMPLOYEE_RESIZE_PATH;
 		if (!emp.exists()) {
 			emp.mkdirs();
 			writeImageForDevice = stringArray[NumberConstants.ONE] = empDirPath
@@ -151,11 +152,11 @@ public class ImageProcessingUtil {
 		return writeImageForDevice;
 	}
 
-	private String getOriginalImagePath(String[] stringArray,  String empId, File org) {
+	private String getOriginalImagePath(String[] stringArray,  String empId, File file, String orgName) {
 		String writeImageForOrginal;
-		String orgDirPath = DefaultConstants.EMPLOYEE_ORIGINAL_PATH;
-		if (!org.exists()) {
-			org.mkdirs();
+		String orgDirPath = orgName+ApplicationConstants.DELIMITER_FORWARD_SLASH+DefaultConstants.EMPLOYEE_ORIGINAL_PATH;
+		if (!file.exists()) {
+			file.mkdirs();
 			writeImageForOrginal = stringArray[NumberConstants.ZERO] = orgDirPath
 					+ ApplicationConstants.DELIMITER_FORWARD_SLASH + empId + ".jpg";
 		} else {
@@ -188,7 +189,7 @@ public class ImageProcessingUtil {
 				InputStream is = new ByteArrayInputStream(bytes);
 				BufferedImage originalImage = ImageIO.read(is);
 
-				String[] imagePath = imageProcessing(originalImage, employee.getEmpId());
+				String[] imagePath = imageProcessing(originalImage, employee.getEmpId(),employee.getOrganization().getName());
 				Image imageObj = imageRepository.findByOriginalPath(imagePath[NumberConstants.ZERO]);
 				if (null == imageObj) {
 					Image imageSaved = new Image();
@@ -226,7 +227,7 @@ public class ImageProcessingUtil {
 					InputStream is = new ByteArrayInputStream(bytes);
 					BufferedImage originalImage = ImageIO.read(is);
 
-					String[] imagePath = imageProcessing(originalImage, empId);
+					String[] imagePath = imageProcessing(originalImage, empId,employee.getOrganization().getName());
 					Image imageObj = imageRepository.findByOriginalPath(imagePath[NumberConstants.ZERO]);
 					if (null == imageObj) {
 						Image imageSaved = new Image();
@@ -247,8 +248,8 @@ public class ImageProcessingUtil {
 			Image imageSaved) {
 		imageSaved.setEmployee(employeeList);
 		imageSaved.setOriginalPath(imagePath[NumberConstants.ZERO]);
-		imageSaved.setThumbnailPath(imagePath[NumberConstants.TWO]);
 		imageSaved.setResizePath(imagePath[NumberConstants.ONE]);
+		imageSaved.setThumbnailPath(imagePath[NumberConstants.TWO]);
 		imageSaved.setDeleted(false);
 
 		imageList.add(imageSaved);

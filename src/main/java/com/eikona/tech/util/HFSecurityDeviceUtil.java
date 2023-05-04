@@ -36,6 +36,7 @@ import com.eikona.tech.entity.Area;
 import com.eikona.tech.entity.Device;
 import com.eikona.tech.entity.Employee;
 import com.eikona.tech.entity.Image;
+import com.eikona.tech.repository.AreaRepository;
 import com.eikona.tech.repository.DeviceRepository;
 import com.eikona.tech.repository.EmployeeRepository;
 import com.eikona.tech.repository.ImageRepository;
@@ -54,6 +55,9 @@ public class HFSecurityDeviceUtil {
 
 	@Autowired
 	private ImageProcessingUtil imageProcessingUtil;
+	
+	@Autowired
+	private AreaRepository areaRepository;
 
 	@Value("${hf.server.url}")
 	private String hfServerIp;
@@ -117,25 +121,6 @@ public class HFSecurityDeviceUtil {
 		employeeRepository.saveAll(empList);
 	}
 
-	public void deleteEmployeeFromHF() {
-		List<Employee> employeeList = employeeRepository.findAllByIsDeletedTrueAndIsSyncTrue();
-		for (Employee employee : employeeList) {
-			if (null != employee.getArea()) {
-				List<Device> deviceList = deviceRepository.findByAreaAndIsDeletedFalseCustom(employee.getArea());
-
-				for (Device device : deviceList) {
-
-					if ("HF-Security".equalsIgnoreCase(device.getModel())) {
-						try {
-							deleteEmployeeFromHFDevice(employee.getEmpId(), device);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}
-	}
 
 //Delete Employee From HF Device
 	public boolean deleteEmployeeFromHFDevice(String empId, Device device) {
@@ -165,9 +150,7 @@ public class HFSecurityDeviceUtil {
 	}
 
 //Search Employee In HF Device	
-	public boolean searchEmployeeFromHFDevice(String empId, Device device) {
-
-		String deviceKey = device.getSerialNo();
+	public boolean searchEmployeeFromHFDevice(String empId, String deviceKey) {
 
 		String myurl = ApplicationConstants.HTTP_COLON_DOUBLE_SLASH + hfServerIp + ApplicationConstants.DELIMITER_COLON
 				+ NumberConstants.EIGHT_THOUSAND_ONE_HUNDRED_NINTY + "/api/person/find" + "?secret=" + hfServerSecret
@@ -217,12 +200,13 @@ public class HFSecurityDeviceUtil {
 			int index = NumberConstants.ZERO;
 			Long countEmployee = NumberConstants.LONG_ZERO;
 			Long totalEmployee = NumberConstants.LONG_ZERO;
+			List<Area> areaList=areaRepository.findByOrganizationAndIsDeletedFalse(device.getOrganization());
 			do {
 
 				String myurl = ApplicationConstants.HTTP_COLON_DOUBLE_SLASH + hfServerIp
 						+ ApplicationConstants.DELIMITER_COLON + NumberConstants.EIGHT_THOUSAND_ONE_HUNDRED_NINTY
 						+ "/api/person/list/find" + "?secret=" + hfServerSecret + "&deviceKey=" + device.getSerialNo()
-						+ "&index=" + index + "&length=" + 500;
+						+ "&index=" + index + "&length=" + 50;
 
 				HttpGet request = new HttpGet(myurl);
 				String responeData = requestExecutionUtil.executeHttpGetRequest(request);
@@ -241,7 +225,7 @@ public class HFSecurityDeviceUtil {
 
 				JSONArray jsonArray = (JSONArray) responseDataObj.get(HFDeviceConstants.RECORDS);
 				countEmployee += jsonArray.size();
-				saveEmployeeFromHFDevice(device, jsonArray);
+				saveEmployeeFromHFDevice(device, jsonArray,areaList);
 
 				index += NumberConstants.ONE;
 
@@ -252,38 +236,28 @@ public class HFSecurityDeviceUtil {
 
 	}
 
-	private void saveEmployeeFromHFDevice(Device device, JSONArray jsonArray) {
-		List<Employee> employeeList = new ArrayList<Employee>();
+	private void saveEmployeeFromHFDevice(Device device, JSONArray jsonArray, List<Area> areaList) {
 		for (int i = NumberConstants.ZERO; i < jsonArray.size(); i++) {
 			JSONObject personalInfoObj = (JSONObject) jsonArray.get(i);
-			Employee personnelData = employeeRepository
-					.findByEmpIdAndIsDeletedFalse((String) personalInfoObj.get(HFDeviceConstants.ID));
+			Employee personnelData = employeeRepository.findByEmpIdAndIsDeletedFalse((String) personalInfoObj.get(HFDeviceConstants.ID));
 
-			Employee employee = new Employee();
+			
 			if (null == personnelData) {
+				Employee employee = new Employee();
 				employee.setEmpId((String) personalInfoObj.get(HFDeviceConstants.ID));
 				employee.setName((String) personalInfoObj.get(ApplicationConstants.NAME));
-				List<Area> areaList = new ArrayList<>();
-				areaList.add(device.getArea());
 				employee.setArea(areaList);
-				employee.setSyncFromDevice(true);
-				employeeList.add(employee);
+				employee.setSync(false);
+				employee.setFaceSync(false);
+				employee.setOrganization(device.getOrganization());
+				employee.setSyncDeviceKey(device.getSerialNo());
+				employeeRepository.save(employee);
+				
+				pullParticularEmployeeFaceFromHF(employee, device.getSerialNo());
 			}
 		}
-		employeeRepository.saveAll(employeeList);
 	}
 
-//Pull All Employee Image From HF Security
-	public void pullAllEmployeeFaceFromHFDevice(String deviceKey) {
-		List<Employee> employeeList = employeeRepository.findAllByIsDeletedFalseAndIsSyncFromDeviceTrue();
-		List<Employee> savedList = new ArrayList<>();
-		for (Employee employee : employeeList) {
-			pullParticularEmployeeFaceFromHF(employee, deviceKey);
-			employee.setFaceSyncFromDevice(true);
-			savedList.add(employee);
-		}
-		employeeRepository.saveAll(employeeList);
-	}
 
 	public void pullParticularEmployeeFaceFromHF(Employee employee, String deviceKey) {
 		HttpHeaders headers = new HttpHeaders();
@@ -309,14 +283,17 @@ public class HFSecurityDeviceUtil {
 			e.printStackTrace();
 		}
 		JSONArray imageArray = (JSONArray) jsonResponse.get(HFDeviceConstants.DATA);
-		byte[] imageByte = getByteArrayFromJsonArray(imageArray);
-		saveImage(imageByte, employee);
+		if(!imageArray.isEmpty()) {
+			byte[] imageByte = getByteArrayFromJsonArray(imageArray);
+			saveImage(imageByte, employee);
+		}
+		
 	}
 
 	private byte[] getByteArrayFromJsonArray(JSONArray imageArray) {
 		byte[] imageByte = null;
-		for (int j = NumberConstants.ZERO; j < imageArray.size(); j++) {
-			JSONObject imageInfoObj = (JSONObject) imageArray.get(j);
+		if(imageArray.size()>0) {
+			JSONObject imageInfoObj = (JSONObject) imageArray.get(0);
 			String encodedImage = (String) imageInfoObj.get(HFDeviceConstants.IMG_BASE64);
 			imageByte = Base64.decodeBase64(encodedImage);
 		}
@@ -327,21 +304,20 @@ public class HFSecurityDeviceUtil {
 
 		try {
 			List<Image> imageList = new ArrayList<>();
-			String fileName = employee.getEmpId() + ApplicationConstants.EXTENSION_JPG;
 
 			List<Employee> employeeList = new ArrayList<Employee>();
 			employeeList.add(employee);
 			InputStream is = new ByteArrayInputStream(bytes);
 			BufferedImage originalImage = ImageIO.read(is);
 
-			String[] imagePath = imageProcessingUtil.imageProcessing(originalImage, fileName);
+			String[] imagePath = imageProcessingUtil.imageProcessing(originalImage, employee.getEmpId(),employee.getOrganization().getName());
 			Image imageObj = imageRepository.findByOriginalPath(imagePath[NumberConstants.ZERO]);
 			if (null == imageObj) {
 				Image imageNewObj = new Image();
 				imageNewObj.setEmployee(employeeList);
 				imageNewObj.setOriginalPath(imagePath[NumberConstants.ZERO]);
-				imageNewObj.setThumbnailPath(imagePath[NumberConstants.ONE]);
-				imageNewObj.setResizePath(imagePath[NumberConstants.TWO]);
+				imageNewObj.setResizePath(imagePath[NumberConstants.ONE]);
+				imageNewObj.setThumbnailPath(imagePath[NumberConstants.TWO]);
 
 				imageList.add(imageNewObj);
 			}
@@ -351,6 +327,7 @@ public class HFSecurityDeviceUtil {
 			e.printStackTrace();
 		}
 	}
+	
 //Set HeartBeat Url
 	public boolean setHeartbeatUrl(String deviceKey) {
 	

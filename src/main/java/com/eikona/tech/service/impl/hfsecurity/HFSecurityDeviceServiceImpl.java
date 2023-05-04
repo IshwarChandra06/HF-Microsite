@@ -19,6 +19,7 @@ import com.eikona.tech.constants.ApplicationConstants;
 import com.eikona.tech.constants.NumberConstants;
 import com.eikona.tech.entity.ActionDetails;
 import com.eikona.tech.entity.Employee;
+import com.eikona.tech.util.HFSecurityDeviceUtil;
 import com.eikona.tech.util.RequestExecutionUtil;
 @Service
 public class HFSecurityDeviceServiceImpl{
@@ -31,6 +32,9 @@ public class HFSecurityDeviceServiceImpl{
 	
 	@Autowired
 	private RequestExecutionUtil requestExecutionUtil;
+	
+	@Autowired
+	private HFSecurityDeviceUtil hfSecurityDeviceUtil;
 
 
 	public String addEmployeeToDevice(ActionDetails actionDetails) {
@@ -39,7 +43,9 @@ public class HFSecurityDeviceServiceImpl{
 		String deviceKey = actionDetails.getDevice().getSerialNo();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
+//		boolean result =hfSecurityDeviceUtil.searchEmployeeFromHFDevice(personnel.getEmpId(), actionDetails.getDevice().getSerialNo());
+//		if(result) 
+		hfSecurityDeviceUtil.deleteEmployeeFromHFDevice(actionDetails.getAction().getEmployee().getEmpId(), actionDetails.getDevice());
 		String returnCode = addEmployeeDetailsToDevice(personnel, deviceKey);
 		
 		return returnCode;

@@ -75,6 +75,9 @@ public class Employee extends Auditable<String> implements Serializable {
 	@Column
 	private String joinDate;
 	
+	@Column
+	private String syncDeviceKey;
+	
 	@ManyToMany
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name = "et_employee_area",
@@ -252,6 +255,12 @@ public class Employee extends Auditable<String> implements Serializable {
 	}
 	public void setArea(List<Area> area) {
 		this.area = area;
+	}
+	public String getSyncDeviceKey() {
+		return syncDeviceKey;
+	}
+	public void setSyncDeviceKey(String syncDeviceKey) {
+		this.syncDeviceKey = syncDeviceKey;
 	}
 	
 }

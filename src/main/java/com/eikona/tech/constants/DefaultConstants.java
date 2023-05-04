@@ -11,8 +11,8 @@ public final class DefaultConstants {
 	public static final String CONTENT_STORE_ROOT_PATH="C:/Users/Administrator/Documents/workspace/";
 //	public static final String CONTENT_STORE_ROOT_PATH="mata/images/";
 	
-	public static final String EMPLOYEE_ORIGINAL_PATH="employee/images/orginal";
-	public static final String EMPLOYEE_RESIZE_PATH="employee/images/resize";
-	public static final String EMPLOYEE_THUIMBNAIL_PATH="employee/images/thumbnails";
+	public static final String EMPLOYEE_ORIGINAL_PATH="orginal";
+	public static final String EMPLOYEE_RESIZE_PATH="resize";
+	public static final String EMPLOYEE_THUIMBNAIL_PATH="thumbnails";
 	
 }

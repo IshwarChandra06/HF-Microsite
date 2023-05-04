@@ -181,14 +181,18 @@ public class ActionDetailsServiceImpl implements ActionDetailsService {
 
 			if (null != deviceList && !deviceList.isEmpty()) {
 				for (Device device : deviceList) {
-					ActionDetails actionDetails = new ActionDetails();
-					actionDetails.setAction(action);
-					actionDetails.setDevice(device);
+//					if(!(action.getEmployee().getSyncDeviceKey().equals(device.getSerialNo()))) {
+						ActionDetails actionDetails = new ActionDetails();
+						actionDetails.setAction(action);
+						actionDetails.setDevice(device);
 
-					if ("HF-Security".equalsIgnoreCase(device.getModel())) {
-						addEmployeeToHFSecurity(actionDetails, action.getEmployee(), device);
-					 }
-					actionDetailsList.add(actionDetails);
+						if ("HF-Security".equalsIgnoreCase(device.getModel())) {
+							addEmployeeToHFSecurity(actionDetails, action.getEmployee(), device);
+							actionDetailsList.add(actionDetails);
+						 }
+//					}
+					
+					
 				}
 			}
 			actionDetailsRepository.saveAll(actionDetailsList);

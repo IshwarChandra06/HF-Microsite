@@ -12,10 +12,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.eikona.tech.entity.Action;
 import com.eikona.tech.entity.ActionDetails;
 import com.eikona.tech.entity.Device;
 import com.eikona.tech.entity.Employee;
 import com.eikona.tech.repository.ActionDetailsRepository;
+import com.eikona.tech.repository.ActionRepository;
 import com.eikona.tech.repository.DeviceRepository;
 import com.eikona.tech.repository.EmployeeRepository;
 import com.eikona.tech.service.ActionService;
@@ -37,26 +39,29 @@ public class SchedulerServiceImpl {
 	private ActionService actionService;
 	
 	@Autowired
+	private ActionRepository actionRepository;
+	
+	@Autowired
 	private DeviceRepository deviceRepository;
 	
 	@Autowired
 	private HFSecurityDeviceUtil hfSecurityDeviceUtil;
 	
-	@Scheduled(cron = "0 0 0/8 * * ?")
+	@Scheduled(cron = "0 0 0/4 * * ?")
 	public void syncPendingDataFromMataToDevice() {
 		
 		List<ActionDetails> actionDetailList = actionDetailsRepository.findByStatus("Pending");
 		List<ActionDetails> saveActionDetailList=new ArrayList<ActionDetails>();
 		
 		for(ActionDetails actionDetails:actionDetailList) {
-			actionDetailsServiceImpl.addEmployeeToHFSecurity(actionDetails,actionDetails.getAction().getEmployee(),actionDetails.getDevice());
-			saveActionDetailList.add(actionDetails);
+			  actionDetailsServiceImpl.addEmployeeToHFSecurity(actionDetails,actionDetails.getAction().getEmployee(),actionDetails.getDevice());
+			  saveActionDetailList.add(actionDetails);
 		}
 		actionDetailsRepository.saveAll(saveActionDetailList);
 	}
 	
  //	@Scheduled(cron = "0 0 0/10 * * ?")
- //@Scheduled(fixedDelay = 5000)
+// @Scheduled(fixedDelay = 5000)
 	public void autoSyncEmployeeFromMataToDevice() {
 		List<Employee> employeeList = employeeRepository.findAllByIsDeletedFalseAndIsSyncFalseCustom();
 		for (Employee employee : employeeList) {
@@ -99,9 +104,10 @@ public void setDeviceConfig() {
 		}
 		
 	}
+	
 }
 
-@Scheduled(cron = "0 0 0/12 * * ?")
+@Scheduled(cron="0 0 3 * * *")
 public void rebootAllDevices() {
 	List<Device> deviceList=deviceRepository.findAllByIsDeletedFalse();
 	for(Device device:deviceList) {
@@ -133,5 +139,81 @@ public void updateErrorActionDetails() {
 		}
 	}
 	actionDetailsRepository.saveAll(saveActionDetailList);
+}
+
+@Scheduled(cron="0 0 15 * * *")
+public void deleteEmployeeFromHF() {
+	List<Employee> employeeList = employeeRepository.findAllByIsDeletedTrueAndIsSyncTrue();
+	List<Employee> saveEmployeeList=new ArrayList<Employee>();
+	for (Employee employee : employeeList) {
+		if (null != employee.getArea()) {
+			List<Device> deviceList = deviceRepository.findByAreaAndIsDeletedFalseCustom(employee.getArea());
+			List<ActionDetails> saveActionDetailList=new ArrayList<ActionDetails>();
+			for (Device device : deviceList) {
+				if ("HF-Security".equalsIgnoreCase(device.getModel())) {
+					try {
+						boolean isResponse=hfSecurityDeviceUtil.deleteEmployeeFromHFDevice(employee.getEmpId(), device);
+						Action action=new Action();
+						action.setEmployee(employee);
+						action.setSource("App");
+						action.setType("Delete");
+						action=actionRepository.save(action);
+						
+						ActionDetails actionDetails = new ActionDetails();
+						actionDetails.setAction(action);
+						actionDetails.setDevice(device);
+						if(isResponse) {
+							actionDetails.setStatus("Completed");
+							actionDetails.setMessage("Completed");
+							employee.setSync(false);
+							saveEmployeeList.add(employee);
+						}
+						else {
+							actionDetails.setStatus("Delete Pending");
+							actionDetails.setMessage("Device not connected with network");
+						}
+						
+						saveActionDetailList.add(actionDetails);
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			actionDetailsRepository.saveAll(saveActionDetailList);
+		}
+	}
+	employeeRepository.saveAll(saveEmployeeList);
+}
+
+@Scheduled(cron="0 30 2 * * *")
+public void deletePendingDataFromDevice() {
+	
+	List<ActionDetails> actionDetailList = actionDetailsRepository.findByStatus("Delete Pending");
+	List<ActionDetails> saveActionDetailList=new ArrayList<ActionDetails>();
+	for(ActionDetails actionDetails:actionDetailList) {
+		boolean isResponse=hfSecurityDeviceUtil.deleteEmployeeFromHFDevice(actionDetails.getAction().getEmployee().getEmpId(), actionDetails.getDevice());
+		if(isResponse) {
+			actionDetails.setStatus("Completed");
+			actionDetails.setMessage("Completed");
+			actionDetails.getAction().getEmployee().setSync(false);
+			employeeRepository.save(actionDetails.getAction().getEmployee());
+		}
+		else {
+			actionDetails.setStatus("Delete Pending");
+			actionDetails.setMessage("Device not connected with network");
+		}
+		saveActionDetailList.add(actionDetails);
+	}
+	actionDetailsRepository.saveAll(saveActionDetailList);
+}
+
+//@Scheduled(cron = "0 0 0/6 * * ?")
+//@Scheduled(fixedDelay = 5000)
+public void autoSyncEmployeeDataFromDevices() {
+	List<Device> deviceList=deviceRepository.findAllByIsDeletedFalse();
+	for(Device device:deviceList) {
+		hfSecurityDeviceUtil.pullAllEmployeeFromHFDevice(device);
+	}
 }
 }

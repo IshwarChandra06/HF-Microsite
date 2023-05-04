@@ -57,18 +57,20 @@
 								</ul>
 							</div>
 							<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('employee_import')">
-							 <a th:href="@{/import/employee-list}" class="btn add-btn"><i class="las la-file-import"></i>Import Employee Excel</a>
+							 <a th:href="@{/import/employee-list}" class="btn add-btn"><i class="las la-file-import"></i> Import Employee Excel</a>
 							</div>
 							<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('employee_import')">
-							 <a th:href="@{/import/image-directory}" class="btn add-btn"><i class="las la-file-import"></i>Import Image Directory</a>
+							 <a th:href="@{/import/image-directory}" class="btn add-btn"><i class="las la-file-upload"></i> Import Image Directory</a>
 							</div>
 							<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('employee_import')">
-							 <a th:href="@{/import/employee-delete-list}" class="btn add-btn"><i class="las la-file-import"></i>Import Excel For Delete</a>
+							 <a th:href="@{/import/employee-delete-list}" class="btn add-btn"><i class="las la-trash"></i> Import Excel For Delete</a>
 							</div>
-							
+							<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('employee_create')">
+							 <a th:href="@{/update-employee-area}" class="btn add-btn"><i class="las la-sync"></i> Sync Areas To Employees </a>
+						   </div>
 							<div class="col-auto float-right ml-auto"  id="excel-button" sec:authorize="hasAuthority('employee_export')">
 							<button  value ="excel" type="button" class="btn add-btn export-data"><i class="las la-download"></i> Export To Excel</button>
-						</div>
+						   </div>
 							
 							<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('employee_create')">
 							<a th:href = "@{/employee/new}" class="btn add-btn" ><i class="fa fa-plus"></i> Add Employee</a>
