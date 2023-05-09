@@ -29,6 +29,7 @@ import com.eikona.tech.entity.User;
 import com.eikona.tech.repository.ActionDetailsRepository;
 import com.eikona.tech.repository.UserRepository;
 import com.eikona.tech.service.ActionDetailsService;
+import com.eikona.tech.service.impl.model.SchedulerServiceImpl;
 import com.eikona.tech.util.ExportActionDetails;
 
 @Controller
@@ -46,6 +47,9 @@ public class ActionDetailsController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private SchedulerServiceImpl schedulerServiceImpl;
+	
 	
 
 	@GetMapping("/action-details")
@@ -53,7 +57,11 @@ public class ActionDetailsController {
 		model.addAttribute("listActionDetails", actionDetailsService.getAll());
 		return "actionDetails/actionDetails_list";
 	}
-
+	@GetMapping("/update-action-details")
+	public String updateActionDetails() {
+		schedulerServiceImpl.updateErrorActionDetails();
+		return "redirect:/action-details";
+	}
 	@GetMapping("/action-details/new")
 	public String newActionDetails(Model model) {
 

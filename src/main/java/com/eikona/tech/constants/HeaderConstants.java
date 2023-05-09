@@ -60,4 +60,5 @@ public final class HeaderConstants {
 	public static final String DEVICE = "Device Name";
 	public static final String EMAIL = "Email";
 	public static final String CONTACT_NO = "Contact No";
+	public static final String AADHAAR_NO = "Aadhaar No";
 }

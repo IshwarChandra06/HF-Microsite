@@ -560,7 +560,7 @@ public class HFSecurityDeviceUtil {
 
 	public String employeeImageConversionToBase64(Employee personnel) {
 		String encodedImage = "";
-		List<Image> imageList = imageRepository.findByEmployee(personnel);
+		List<Image> imageList = imageRepository.findByEmployeeOrderByIdDesc(personnel);
 		try {
 		if(!imageList.isEmpty()) {
 			Image resizeImage = imageList.get(NumberConstants.ZERO);

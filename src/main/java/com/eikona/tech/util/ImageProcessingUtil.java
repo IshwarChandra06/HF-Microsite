@@ -49,18 +49,17 @@ public class ImageProcessingUtil {
 	public byte[] searchEmployeeImage(long id) {
 		Employee emp = new Employee();
 		emp.setId(id);
-		List<Image> imageList = imageRepository.findByEmployee(emp);
+		List<Image> imageList = imageRepository.findByEmployeeOrderByIdDesc(emp);
 		String bytesBase64 = null;
 		byte[] bytes = null;
 		if (null != imageList) {
 
 			try {
-				for (Image image : imageList) {
-					String imagePath = image.getResizePath();
+				    Image image=imageList.get(0);
+					String imagePath = image.getThumbnailPath();
 					InputStream inputStream = new FileInputStream(imagePath);
 					bytes = IOUtils.toByteArray(inputStream);
 					bytesBase64 = Base64.encodeBase64String(bytes);
-				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

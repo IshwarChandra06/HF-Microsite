@@ -41,7 +41,7 @@ public interface EmployeeService {
 	void deleteById(long id, Principal principal);
 	
 	PaginationDto<Employee> searchByField(String name, String empId, String department, String designation,
-			String grade, int pageno, String sortField, String sortDir, String orgname);
+			String grade, String aadhaarNo, int pageno, String sortField, String sortDir, String orgname);
 	
 	String deleteEmployeeList(MultipartFile file);
 	

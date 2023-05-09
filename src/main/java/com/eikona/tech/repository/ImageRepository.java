@@ -13,6 +13,7 @@ public interface ImageRepository  extends DataTablesRepository<Image, Long> {
 
 	Image findByOriginalPath(String string);
 
-	List<Image> findByEmployee(Employee emp);
+	
+	List<Image> findByEmployeeOrderByIdDesc(Employee emp);
 
 }

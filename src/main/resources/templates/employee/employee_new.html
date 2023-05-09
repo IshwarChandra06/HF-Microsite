@@ -99,13 +99,7 @@
 										class="form-control">
 								</td>
 							</tr>
-							 <tr>
-								<td>Email</td>
-									<td>
-									<input type="email" th:field="*{email}" placeholder="Enter Mail Id" maxlength="50"
-										class="form-control"></td>
-									<td>
-							</tr>
+							
 							<tr>
 								<td><h3><b>Personal&nbsp;Details:</b></h3></td>
 						   </tr>
@@ -139,10 +133,22 @@
 										class="form-control" rows="5" cols="8" maxlength="200"></textarea></td>
 							</tr>
 							 <tr>
-								<td>Mobile No</td>
-								<td> 
+								<td>Email</td>
+									<td>
+									<input type="email" th:field="*{email}" placeholder="Enter Mail Id" maxlength="50"
+										class="form-control">
+									</td>
+									<td>Mobile No</td>
+								  <td> 
 							   		<input type="number" th:field="*{mobile}" 
 										placeholder="Enter 10 digit Mobile No"  class="form-control" pattern="/^-?\d+\.?\d*$/" onkeypress="if(this.value.length==10) return false;">
+								  </td>
+							</tr>
+							 <tr>
+								<td>Aadhaar No</td>
+								<td>
+							   		<input type="number" th:field="*{aadharNo}" 
+										placeholder="Enter 12 digit Aadhaar No"  class="form-control" pattern="/^-?\d+\.?\d*$/" onkeypress="if(this.value.length==12) return false;">
 								</td>
 								<td>Upload Employee Image</td>
 									<td>

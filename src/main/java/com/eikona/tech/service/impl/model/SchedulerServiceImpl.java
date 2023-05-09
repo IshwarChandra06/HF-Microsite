@@ -60,8 +60,7 @@ public class SchedulerServiceImpl {
 		actionDetailsRepository.saveAll(saveActionDetailList);
 	}
 	
- //	@Scheduled(cron = "0 0 0/10 * * ?")
-// @Scheduled(fixedDelay = 5000)
+ 	@Scheduled(cron="0 0 13 * * *")
 	public void autoSyncEmployeeFromMataToDevice() {
 		List<Employee> employeeList = employeeRepository.findAllByIsDeletedFalseAndIsSyncFalseCustom();
 		for (Employee employee : employeeList) {
@@ -123,7 +122,7 @@ public void rebootAllDevices() {
 public void updateErrorActionDetails() {
 	
 	List<ActionDetails> actionDetailList = actionDetailsRepository.findByStatus("Error");
-	List<ActionDetails> saveActionDetailList=new ArrayList<ActionDetails>();
+	List<ActionDetails> deleteActionDetailList=new ArrayList<ActionDetails>();
 	
 	for(ActionDetails actionDetails:actionDetailList) {
 
@@ -132,16 +131,14 @@ public void updateErrorActionDetails() {
 		if(errorActionDetailList.size()>1) {
 			for(int i=1; i<errorActionDetailList.size(); i++) {
 				ActionDetails errorActionDetails = errorActionDetailList.get(i);
-				errorActionDetails.setStatus("Completed");
-				errorActionDetails.setMessage("Completed");
-				saveActionDetailList.add(errorActionDetails);
+				deleteActionDetailList.add(errorActionDetails);
 			}
 		}
 	}
-	actionDetailsRepository.saveAll(saveActionDetailList);
+	actionDetailsRepository.deleteAll(deleteActionDetailList);
 }
 
-@Scheduled(cron="0 0 15 * * *")
+@Scheduled(cron="0 0 18 * * *")
 public void deleteEmployeeFromHF() {
 	List<Employee> employeeList = employeeRepository.findAllByIsDeletedTrueAndIsSyncTrue();
 	List<Employee> saveEmployeeList=new ArrayList<Employee>();
@@ -166,6 +163,7 @@ public void deleteEmployeeFromHF() {
 							actionDetails.setStatus("Completed");
 							actionDetails.setMessage("Completed");
 							employee.setSync(false);
+							employee.setFaceSync(false);
 							saveEmployeeList.add(employee);
 						}
 						else {

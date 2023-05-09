@@ -94,7 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	
 	@Override
 	public PaginationDto<Employee> searchByField(String name, String empId,  String department,
-			String designation,String grade, int pageno, String sortField, String sortDir, String organization) {
+			String designation,String grade,String aadhaarNo, int pageno, String sortField, String sortDir, String organization) {
 
 		if (null == sortDir || sortDir.isEmpty()) {
 			sortDir = ApplicationConstants.ASC;
@@ -102,7 +102,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		if (null == sortField || sortField.isEmpty()) {
 			sortField = ApplicationConstants.ID;
 		}
-		Page<Employee> page = getEmployeePage(name, empId, department, designation,grade, pageno, sortField,
+		Page<Employee> page = getEmployeePage(name, empId, department, designation,grade,aadhaarNo, pageno, sortField,
 				sortDir, organization);
         List<Employee> employeeList =  page.getContent();
         List<Employee> employeeWithImgList = new ArrayList<Employee>();
@@ -119,7 +119,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	private Page<Employee> getEmployeePage(String name, String empId, String department,
-			String designation, String grade, int pageno, String sortField, String sortDir, String orgName) {
+			String designation, String grade, String aadhaarNo, int pageno, String sortField, String sortDir, String orgName) {
 		
 		Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
 				: Sort.by(sortField).descending();
@@ -129,12 +129,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Specification<Employee> nameSpc = generalSpecificationEmployee.stringSpecification(name, ApplicationConstants.NAME);
 		Specification<Employee> empIdSpc = generalSpecificationEmployee.stringSpecification(empId, EmployeeConstants.EMPID);
 		Specification<Employee> gradeSpc = generalSpecificationEmployee.stringSpecification(grade, EmployeeConstants.GRADE);
+		Specification<Employee> aadharSpc = generalSpecificationEmployee.stringSpecification(aadhaarNo, EmployeeConstants.AADHAR_NO);
 		Specification<Employee> deptSpec = generalSpecificationEmployee.foreignKeyStringSpecification(department, EmployeeConstants.DEPARTMENT,ApplicationConstants.NAME);
 		Specification<Employee> designationSpc = generalSpecificationEmployee.foreignKeyStringSpecification(designation, EmployeeConstants.DESIGNATION,ApplicationConstants.NAME);
 		
 		Specification<Employee> orgSpc = generalSpecificationEmployee.foreignKeyStringSpecification(orgName, AreaConstants.ORGANIZATION, ApplicationConstants.NAME);
 		
-    	Page<Employee> page = employeeRepository.findAll(nameSpc.and(empIdSpc).and(deptSpec).and(designationSpc).and(isDeletedFalse).and(gradeSpc).and(orgSpc), pageable);
+    	Page<Employee> page = employeeRepository.findAll(nameSpc.and(empIdSpc).and(deptSpec).and(designationSpc).and(isDeletedFalse).and(gradeSpc).and(orgSpc).and(aadharSpc), pageable);
 		return page;
 	}
 	@Override

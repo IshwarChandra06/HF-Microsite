@@ -22,9 +22,9 @@ public class ManagementController {
 		schedulerServiceImpl.syncPendingDataFromMataToDevice();
 	}
 	
-	@GetMapping("/update-action-details")
-	public void updateActionDetails() {
-		schedulerServiceImpl.updateErrorActionDetails();
+	@GetMapping("/pending-delete-test")
+	public void pendingEmployeeDeleteFromAllDevice() {
+		schedulerServiceImpl.deletePendingDataFromDevice();
 	}
 	
 	@GetMapping("/keep-online-test")

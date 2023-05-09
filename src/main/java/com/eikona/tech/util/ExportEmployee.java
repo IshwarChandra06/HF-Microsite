@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import com.eikona.tech.constants.ApplicationConstants;
 import com.eikona.tech.constants.AreaConstants;
-import com.eikona.tech.constants.DailyAttendanceConstants;
 import com.eikona.tech.constants.EmployeeConstants;
 import com.eikona.tech.constants.HeaderConstants;
 import com.eikona.tech.constants.NumberConstants;
@@ -42,17 +41,17 @@ public class ExportEmployee {
 	private EmployeeRepository employeeRepository;
 
 	public void fileExportBySearchValue(HttpServletResponse response,String name, String empId,
-			 String department, String designation,String grade, String flag, String orgName) throws ParseException, IOException {
+			 String department, String designation,String grade, String flag, String orgName,String aadhaarNo) throws ParseException, IOException {
 		
 		List<Employee> employeeList = getListOfEmployee(name, empId, designation,
-				department, orgName,grade);
+				department, orgName,grade,aadhaarNo);
 		
 		excelGenerator(response, employeeList);
 		
 	}
 
 	private List<Employee> getListOfEmployee(String name, String empId, String designation, String department,
-			String orgName, String grade) {
+			String orgName, String grade,String aadhaarNo) {
 		Specification<Employee> employeeNameSpec = generalSpecification.stringSpecification(name,EmployeeConstants.NAME);
 		Specification<Employee> employeeIdSpec = generalSpecification.stringSpecification(empId,EmployeeConstants.EMPID);
     	Specification<Employee> departmentSpec = generalSpecification.foreignKeyStringSpecification(department,EmployeeConstants.DEPARTMENT,EmployeeConstants.NAME); 
@@ -60,7 +59,8 @@ public class ExportEmployee {
     	Specification<Employee> orgSpec = generalSpecification.foreignKeyStringSpecification(orgName, AreaConstants.ORGANIZATION,EmployeeConstants.NAME);
     	Specification<Employee> isDeletedFalse = generalSpecification.isDeletedSpecification();
     	Specification<Employee> gradeSpc = generalSpecification.stringSpecification(grade, EmployeeConstants.GRADE);
-    	List<Employee> employeeList =employeeRepository.findAll(employeeNameSpec.and(isDeletedFalse).and(gradeSpc)
+    	Specification<Employee> aadharSpc = generalSpecification.stringSpecification(aadhaarNo, EmployeeConstants.AADHAR_NO);
+    	List<Employee> employeeList =employeeRepository.findAll(employeeNameSpec.and(isDeletedFalse).and(gradeSpc).and(aadharSpc)
 				.and(employeeIdSpec).and(departmentSpec).and(designationSpec).and(orgSpec));
 		return employeeList;
 	}
@@ -69,7 +69,7 @@ public class ExportEmployee {
 
 		DateFormat dateFormat = new SimpleDateFormat(ApplicationConstants.DATE_TIME_FORMAT_OF_INDIA_SPLIT_BY_SPACE);
 		String currentDateTime = dateFormat.format(new Date());
-		String filename = DailyAttendanceConstants.DAILY_ATTENDANCE_REPORT + currentDateTime + ApplicationConstants.EXTENSION_EXCEL;
+		String filename = "Employee_Master_Data" + currentDateTime + ApplicationConstants.EXTENSION_EXCEL;
 		Workbook workBook = new XSSFWorkbook();
 		Sheet sheet = workBook.createSheet();
 
@@ -151,6 +151,10 @@ public class ExportEmployee {
 			cell = row.createCell(columnCount++);
 			cell.setCellValue(employee.getGender());
 			cell.setCellStyle(cellStyle);
+			
+			cell = row.createCell(columnCount++);
+			cell.setCellValue(employee.getAadharNo());
+			cell.setCellStyle(cellStyle);
 
 			cell = row.createCell(columnCount++);
 			cell.setCellValue(employee.getMobile());
@@ -201,6 +205,10 @@ public class ExportEmployee {
 
 		cell = row.createCell(columnCount++);
 		cell.setCellValue(HeaderConstants.GENDER);
+		cell.setCellStyle(cellStyle);
+		
+		cell = row.createCell(columnCount++);
+		cell.setCellValue(HeaderConstants.AADHAAR_NO);
 		cell.setCellStyle(cellStyle);
 
 		cell = row.createCell(columnCount++);

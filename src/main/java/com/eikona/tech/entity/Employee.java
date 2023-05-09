@@ -50,6 +50,9 @@ public class Employee extends Auditable<String> implements Serializable {
 	@Column(unique = true,name = "emp_id")
 	@NotBlank(message = "Please provide a unique employee id")
 	private String empId;
+	
+	@Column(name = "aadhar_no")
+	private String aadharNo;
 
 	@Column
 	private String gender;
@@ -238,6 +241,13 @@ public class Employee extends Auditable<String> implements Serializable {
 	}
 	public void setFaceSyncFromDevice(boolean isFaceSyncFromDevice) {
 		this.isFaceSyncFromDevice = isFaceSyncFromDevice;
+	}
+	
+	public String getAadharNo() {
+		return aadharNo;
+	}
+	public void setAadharNo(String aadharNo) {
+		this.aadharNo = aadharNo;
 	}
 	public Employee( String name,
 			@NotBlank(message = "Please provide a unique employee id") String empId, boolean isDeleted) {

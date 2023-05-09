@@ -9,5 +9,6 @@ public final class EmployeeConstants {
 	public static final String  DESIGNATION ="designation";
 	public static final String  DEPARTMENT ="department";
 	public static final String GRADE = "grade";
+	public static final String AADHAR_NO = "aadharNo";
 	
 }

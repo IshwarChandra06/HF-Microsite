@@ -90,6 +90,7 @@
 								<option value="department" >Department</option>
 								<option value="designation" >Designation</option>
 								<option value="grade" >Grade</option>
+								<option value="aadhaarNo" >Aadhaar No</option>
 					        </select>
 						</div>
 					</div>
@@ -223,7 +224,7 @@
 				var designation= document.getElementById('orginalByDesignation').value;
 				var grade= document.getElementById('orginalByGrade').value;
 				
-				ajaxCall(name,empId,department,designation,grade, "sortByField", "previousPage", 1,"id","desc");
+				ajaxCall(name,empId,department,designation,grade,"", "sortByField", "previousPage", 1,"id","desc");
         	})
         	
         	
@@ -239,7 +240,7 @@
 				var designation= document.getElementById('orginalByDesignation').value;
 				var grade= document.getElementById('orginalByGrade').value;
 				
-				ajaxCall(name,empId,department,designation,grade, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(name,empId,department,designation,grade,"", "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
 				
         	})
         	//end sort 
@@ -255,7 +256,7 @@
 				var designation= document.getElementById('orginalByDesignation').value;
 				var grade= document.getElementById('orginalByGrade').value;
 				
-				ajaxCall(name,empId,department,designation,grade, "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(name,empId,department,designation,grade,"", "sortByField", "previousPage", valueList[0],valueList[1],valueList[2]);
         	})
 			
 			//start search and sort field
@@ -269,8 +270,9 @@
 				var department = document.getElementById('department').value;
 				var designation = document.getElementById('designation').value;
 				var grade= document.getElementById('grade').value;
+				var aadhaarNo= document.getElementById('aadhaarNo').value;
 				uncheckedRemove();
-				ajaxCall(name,empId,department,designation,grade, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(name,empId,department,designation,grade,aadhaarNo, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
 				
         	})
         	//end search and sort field
@@ -285,8 +287,9 @@
 				var department = document.getElementById('department').value;
 				var designation = document.getElementById('designation').value;
 				var grade= document.getElementById('grade').value;
+				var aadhaarNo= document.getElementById('aadhaarNo').value;
 				uncheckedRemove();
-				ajaxCall(name,empId,department,designation,grade, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
+				ajaxCall(name,empId,department,designation,grade,aadhaarNo, "sortBySearchField", "nextPage", valueList[0],valueList[1],valueList[2]);
         	})
 			
         	$(document).on('click', '.searchButtonField', function(e) {
@@ -296,17 +299,19 @@
 				var department = document.getElementById('department').value;
 				var designation = document.getElementById('designation').value;
 				var grade= document.getElementById('grade').value;
+				var aadhaarNo= document.getElementById('aadhaarNo').value;
 				uncheckedRemove();
-				ajaxCall(name,empId,department,designation,grade, "sortBySearchField", "nextPage", 1,"id","desc");
+				ajaxCall(name,empId,department,designation,grade,aadhaarNo, "sortBySearchField", "nextPage", 1,"id","desc");
         	})
 	        	
-	        function ajaxCall(name,empId,department,designation,grade, headFlag, pageFlag, pageno, sortField,sortDir) {
+	        function ajaxCall(name,empId,department,designation,grade,aadhaarNo, headFlag, pageFlag, pageno, sortField,sortDir) {
 				var data = {
 	           		"name":name,
 	           		"empId":empId,
 	           		"department":department,
 	           		"designation":designation,
 	           		"grade":grade,
+	           		"aadhaarNo":aadhaarNo,
 	           		"pageno":pageno,
 	           		"sortField":sortField,
 	           		"sortDir":sortDir
@@ -342,6 +347,7 @@
 						'<th><b>Grade</b></th>'+
 						'<th><b>Father Name</b></th>'+
 						'<th><b>Gender</b></th>'+
+						'<th><b>Aadhaar No</b></th>'+
 						'<th><b>Mobile</b></th>'+
 						'<th><b>Email</b></th>'+
 						'<th><b>Join Date</b></th>'+
@@ -367,6 +373,8 @@
 						'<button  value="'+result.page_number+'-fatherName-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Father Name</b></button>'+	
 					'</th><th>'+		
 						'<button  value="'+result.page_number+'-gender-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Gender</b></button>'+	
+					'</th><th>'+		
+						'<button  value="'+result.page_number+'-aadharNo-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Aadhaar No</b></button>'+	
 					'</th><th>'+		
 						'<button  value="'+result.page_number+'-mobile-'+result.sortDir+'" type="button" class="btn btn-link '+flag+'"><b>Mobile</b></button>'+	
 					'</th><th>'+		
@@ -422,6 +430,11 @@
               	 	}
               	 	if(null != customer.gender){
               	 		table_data += '<td>' + customer.gender + '</td>';
+              	 	} else{
+              	 		table_data += '<td></td>';
+              	 	}
+              	 	if(null != customer.aadharNo){
+              	 		table_data += '<td>' + customer.aadharNo + '</td>';
               	 	} else{
               	 		table_data += '<td></td>';
               	 	}
@@ -622,10 +635,11 @@
 	            var designation = document.getElementById('designation').value;
 	            var department = document.getElementById('department').value;
 	            var grade = document.getElementById('grade').value;
+	            var aadhaarNo= document.getElementById('aadhaarNo').value;
 	            uncheckedRemove();
                 if("excel" == type){
                 	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
-                	exportData(employeeName,employeeId,department,designation,grade,"export-data-by-search","xlsx");
+                	exportData(employeeName,employeeId,department,designation,grade,aadhaarNo,"export-data-by-search","xlsx");
                 }
 			})
 			
@@ -635,17 +649,18 @@
                 
                 if("excel" == type){
                 	$("#excel-button").html('').append('<button  value ="excel" type="button" class="btn add-btn" disabled><i class="las la-download"></i> Export To Excel  <span class="spinner-border spinner-border-sm"></span></button>');
-                	exportData("","","","","","export-data","xlsx");
+                	exportData("","","","","","","export-data","xlsx");
                 }
 			})
 			
-			function  exportData(name,empId,department,designation,grade,excelButtonClass,flag) {
+			function  exportData(name,empId,department,designation,grade,aadhaarNo,excelButtonClass,flag) {
                 var data = {
                		"name" : name,
                		"empId":empId,
                		"department":department,
                		"designation":designation,
                		"grade":grade,
+               		"aadhaarNo":aadhaarNo,
 	           		"flag":flag
                 }; 
     	            

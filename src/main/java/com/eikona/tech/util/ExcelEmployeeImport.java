@@ -112,6 +112,10 @@ public class ExcelEmployeeImport {
 				 String str=setStringCell( currentCell) ;
 					employeeObj.setEmail(str);
 				}
+			 else if (cellIndex == NumberConstants.TWELVE) {
+				 String str=setStringCell( currentCell) ;
+					employeeObj.setAadharNo(str);
+				}
 
 		}
 		return employeeObj;
@@ -232,6 +236,7 @@ public class ExcelEmployeeImport {
 					emp.setDepartment(employee.getDepartment());
 					emp.setDesignation(employee.getDesignation());
 					emp.setGrade(employee.getGrade());
+					emp.setAadharNo(employee.getAadharNo());
 					emp.setMobile(employee.getMobile());
 					emp.setPermanentAddress(employee.getPermanentAddress());
 					emp.setResidentialAddress(employee.getResidentialAddress());

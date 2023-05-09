@@ -28,6 +28,9 @@
 						       <li class="breadcrumb-item active"><i class="lab la-buffer"></i> Exception</li>
 								</ul>
 							</div>
+<!-- 							<div class="col-auto float-right ml-auto" sec:authorize="hasAuthority('action_details_view')"> -->
+<!-- 							 <a th:href="@{/update-action-details}" class="btn add-btn"><i class="las la-sync"></i> Update Exceptions </a> -->
+<!-- 						   </div> -->
 							<div class="col-auto float-right ml-auto"  id="excel-button" sec:authorize="hasAuthority('action_details_export')">
 							<button  value ="excel" type="button" class="btn add-btn export-data"><i class="las la-download"></i> Export to Excel</button>
 						</div>

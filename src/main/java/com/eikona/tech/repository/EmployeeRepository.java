@@ -70,4 +70,6 @@ public interface EmployeeRepository extends DataTablesRepository<Employee, Long>
 
 	List<Employee> findAllByIsDeletedFalseAndOrganization(Organization organization);
 
+	Employee findByAadharNoAndIsDeletedFalse(String aadharNo);
+
 }
