@@ -123,7 +123,7 @@ public class HFSecurityDeviceUtil {
 
 
 //Delete Employee From HF Device
-	public boolean deleteEmployeeFromHFDevice(String empId, Device device) {
+	public String deleteEmployeeFromHFDevice(String empId, Device device) {
 
 		String deviceKey = device.getSerialNo();
 		HttpHeaders headers = new HttpHeaders();
@@ -139,17 +139,27 @@ public class HFSecurityDeviceUtil {
 		postParameters.add(new BasicNameValuePair("secret", hfServerSecret));
 		postParameters.add(new BasicNameValuePair("personId", empId));
 
-		boolean success = false;
+		String code = null;
 		try {
 			request.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
-			getSuccessResponse(request, success);
+			code=getSuccessResponse(request);
 		} catch (Exception e) {
-			success = false;
 		}
-		return success;
+		return code;
 	}
 
-//Search Employee In HF Device	
+private String getSuccessResponse(HttpPost request) throws Exception {
+	String response = requestExecutionUtil.executeHttpPostRequest(request);
+	System.out.println(response);
+	JSONParser jsonParser = new JSONParser();
+	JSONObject jsonResponse = (JSONObject) jsonParser.parse(response);
+	String code = (String) jsonResponse.get("code");
+	return code;
+}
+
+
+
+	//Search Employee In HF Device	
 	public boolean searchEmployeeFromHFDevice(String empId, String deviceKey) {
 
 		String myurl = ApplicationConstants.HTTP_COLON_DOUBLE_SLASH + hfServerIp + ApplicationConstants.DELIMITER_COLON

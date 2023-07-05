@@ -14,7 +14,7 @@ public interface ActionDetailsRepository extends DataTablesRepository<ActionDeta
 	@Query("select ad from com.eikona.tech.entity.ActionDetails as ad where ad.action.id=:id")
 	List<ActionDetails> findByActionIdCustom(Long id);
 
-	List<ActionDetails> findByStatus(String string);
+	List<ActionDetails> findByStatus(String status);
 
 	@Query("select ad from com.eikona.tech.entity.ActionDetails as ad where ad.action.employee.empId=:empId and ad.device.id=:id order by ad.id desc")
 	List<ActionDetails> findByEmpIdAndDeviceCustom(String empId, Long id);

@@ -15,7 +15,7 @@
 								<a th:href="@{/home}"><i class="la la-dashboard"></i> <span>Dashboard</span></a>
 							</li>
 							<li class="menu-title" sec:authorize="hasAuthority('organization_view')"> 
-								<span>Organization</span>
+								<span>Master</span>
 							</li>
 							<li id="organization_menu" sec:authorize="hasAuthority('organization_view')">
 								<a th:href="@{/organization}"><i class="la la-city"></i> <span> Organization</span></a>

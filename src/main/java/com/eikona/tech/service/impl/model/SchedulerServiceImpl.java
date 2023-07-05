@@ -60,7 +60,7 @@ public class SchedulerServiceImpl {
 		actionDetailsRepository.saveAll(saveActionDetailList);
 	}
 	
- 	@Scheduled(cron="0 0 13 * * *")
+ 	@Scheduled(cron="0 0 12,20 * * *")
 	public void autoSyncEmployeeFromMataToDevice() {
 		List<Employee> employeeList = employeeRepository.findAllByIsDeletedFalseAndIsSyncFalseCustom();
 		for (Employee employee : employeeList) {
@@ -149,7 +149,7 @@ public void deleteEmployeeFromHF() {
 			for (Device device : deviceList) {
 				if ("HF-Security".equalsIgnoreCase(device.getModel())) {
 					try {
-						boolean isResponse=hfSecurityDeviceUtil.deleteEmployeeFromHFDevice(employee.getEmpId(), device);
+						String code=hfSecurityDeviceUtil.deleteEmployeeFromHFDevice(employee.getEmpId(), device);
 						Action action=new Action();
 						action.setEmployee(employee);
 						action.setSource("App");
@@ -159,7 +159,7 @@ public void deleteEmployeeFromHF() {
 						ActionDetails actionDetails = new ActionDetails();
 						actionDetails.setAction(action);
 						actionDetails.setDevice(device);
-						if(isResponse) {
+						if("000".equalsIgnoreCase(code)) {
 							actionDetails.setStatus("Completed");
 							actionDetails.setMessage("Completed");
 							employee.setSync(false);
@@ -190,8 +190,8 @@ public void deletePendingDataFromDevice() {
 	List<ActionDetails> actionDetailList = actionDetailsRepository.findByStatus("Delete Pending");
 	List<ActionDetails> saveActionDetailList=new ArrayList<ActionDetails>();
 	for(ActionDetails actionDetails:actionDetailList) {
-		boolean isResponse=hfSecurityDeviceUtil.deleteEmployeeFromHFDevice(actionDetails.getAction().getEmployee().getEmpId(), actionDetails.getDevice());
-		if(isResponse) {
+		String code=hfSecurityDeviceUtil.deleteEmployeeFromHFDevice(actionDetails.getAction().getEmployee().getEmpId(), actionDetails.getDevice());
+		if("000".equalsIgnoreCase(code)) {
 			actionDetails.setStatus("Completed");
 			actionDetails.setMessage("Completed");
 			actionDetails.getAction().getEmployee().setSync(false);

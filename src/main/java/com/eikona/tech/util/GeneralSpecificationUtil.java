@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.eikona.tech.constants.ApplicationConstants;
 import com.eikona.tech.constants.NumberConstants;
-import com.eikona.tech.entity.DailyReport;
+import com.eikona.tech.entity.ActionDetails;
 
 @Component
 public class GeneralSpecificationUtil<T> {
@@ -162,6 +162,12 @@ public class GeneralSpecificationUtil<T> {
 				return cb.conjunction();
 			}
 			return cb.equal(cb.lower(root.<String>get(field)), value);
+		};
+	}
+
+	public Specification<ActionDetails> foreignKeyDoubleObjectBooleanSpecification(boolean value, String obj,String secondObj, String field) {
+		return (root, query, cb) -> {
+			return cb.equal(root.join(obj).join(secondObj).get(field), value);
 		};
 	}
 }

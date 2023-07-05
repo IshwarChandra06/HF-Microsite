@@ -1,6 +1,7 @@
 package com.eikona.tech.service.impl.hfsecurity;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import com.eikona.tech.entity.Transaction;
 import com.eikona.tech.repository.DeviceRepository;
 import com.eikona.tech.repository.EmployeeRepository;
 import com.eikona.tech.repository.TransactionRepository;
+import com.eikona.tech.service.impl.model.DailyAttendanceFromEventServiceImpl;
 import com.eikona.tech.util.SavingCropImageUtil;
 
 @Component
@@ -30,6 +32,9 @@ public class HFSecurityListenerServiceImpl {
 	
 	@Autowired
 	private TransactionRepository transactionRepository;
+	
+	@Autowired
+	private DailyAttendanceFromEventServiceImpl attendanceFromEventServiceImpl; 
 	
 	public void saveDeviceInfoFromResponse(String ipAddress, String deviceKey, String time, String version,
 			String faceCount, String personCount) {
@@ -59,13 +64,17 @@ public class HFSecurityListenerServiceImpl {
 			 String searchScore, String livenessScore, String mask,
 			String imgBase64, String personId) {
 		
+		List<Transaction> transactionList=new ArrayList<>();
 		Transaction transaction = new Transaction();
-		if(!("STRANGERBABY".equalsIgnoreCase(personId)))
-		 transaction.setEmployeeCode (personId);
 		
-//		List<Transaction> transactionList=transactionRepository.findByPunchDateAndEmpIdCustom(new Date(Long.valueOf(time)),personId);
-		
-//		if(transactionList.isEmpty()) {
+		if(("STRANGERBABY".equalsIgnoreCase(personId)))
+			transactionList=transactionRepository.findByPunchDateAndNameCustom(new Date(Long.valueOf(time)),"Unregistered",deviceKey);
+		else {
+			transactionList=transactionRepository.findByPunchDateAndEmpIdCustom(new Date(Long.valueOf(time)),personId,deviceKey);
+			transaction.setEmployeeCode (personId);
+		}
+			
+		if(transactionList.isEmpty()) {
 			
 			Employee employee = employeeRepository.findByEmpId(personId);
 			Device device = deviceRepository.findBySerialNoAndIsDeletedFalse(deviceKey);
@@ -77,7 +86,9 @@ public class HFSecurityListenerServiceImpl {
 			setBasicTransactionDetails(time, type,searchScore, livenessScore, imgBase64,mask, transaction);
 			
 			transactionRepository.save(transaction);
-//		}
+			
+			attendanceFromEventServiceImpl.generateDailyAttendance(transaction);
+		}
 		
 	}
 

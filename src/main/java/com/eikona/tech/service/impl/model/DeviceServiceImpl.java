@@ -119,9 +119,9 @@ public class DeviceServiceImpl implements DeviceService {
 					
 					long mileseconds = date.getTime() - lastonline.getTime();
 					
-					if("active".equalsIgnoreCase(status) && mileseconds<=120000) {
+					if("active".equalsIgnoreCase(status) && mileseconds<=600000) {
 						newDeviceList.add(device);
-					}else if("inactive".equalsIgnoreCase(status) && mileseconds>120000) {
+					}else if("inactive".equalsIgnoreCase(status) && mileseconds>600000) {
 						newDeviceList.add(device);
 					}
 					

@@ -51,14 +51,14 @@ public class SecurityConfig {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception{
 			http.authorizeRequests().antMatchers(HttpMethod.POST, "/LAPI/**" ,"/Subscribe/**","/hfsecurity/**").permitAll();
-			http.antMatcher("/rest/**")
+			http.antMatcher("/apis/V1/**")
 			.cors()
            
 			.and()
 		    .csrf()
 		    .disable()
 		    .authorizeRequests()
-		    .antMatchers("/rest/authenticate").permitAll()
+		    .antMatchers("/apis/V1/authenticate").permitAll()
 		    .anyRequest().authenticated()
 		    .and().sessionManagement()
 		    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -52,7 +52,7 @@ public class ImageProcessingUtil {
 		List<Image> imageList = imageRepository.findByEmployeeOrderByIdDesc(emp);
 		String bytesBase64 = null;
 		byte[] bytes = null;
-		if (null != imageList) {
+		if (!imageList.isEmpty()) {
 
 			try {
 				    Image image=imageList.get(0);
@@ -187,7 +187,7 @@ public class ImageProcessingUtil {
 				byte[] bytes = file.getBytes();
 				InputStream is = new ByteArrayInputStream(bytes);
 				BufferedImage originalImage = ImageIO.read(is);
-
+				
 				String[] imagePath = imageProcessing(originalImage, employee.getEmpId(),employee.getOrganization().getName());
 				Image imageObj = imageRepository.findByOriginalPath(imagePath[NumberConstants.ZERO]);
 				if (null == imageObj) {
@@ -225,7 +225,7 @@ public class ImageProcessingUtil {
 					byte[] bytes = file.getBytes();
 					InputStream is = new ByteArrayInputStream(bytes);
 					BufferedImage originalImage = ImageIO.read(is);
-
+					
 					String[] imagePath = imageProcessing(originalImage, empId,employee.getOrganization().getName());
 					Image imageObj = imageRepository.findByOriginalPath(imagePath[NumberConstants.ZERO]);
 					if (null == imageObj) {
@@ -242,7 +242,6 @@ public class ImageProcessingUtil {
 			e.printStackTrace();
 		}
 	}
-
 	private void setImagePath(List<Image> imageList, List<Employee> employeeList, String[] imagePath,
 			Image imageSaved) {
 		imageSaved.setEmployee(employeeList);

@@ -248,13 +248,14 @@ public class ActionDetailsServiceImpl implements ActionDetailsService {
 		Specification<ActionDetails> dateSpec = generalSpecificationActionDetails.dateSpecification(startDate, endDate, ApplicationConstants.LAST_MODIFIED_DATE);
 		Specification<ActionDetails> empIdSpc = generalSpecificationActionDetails.foreignKeyDoubleObjectStringSpecification(employeeId, "action","employee", "empId");
 		Specification<ActionDetails> employeeNameSpc = generalSpecificationActionDetails.foreignKeyDoubleObjectStringSpecification(name, "action", "employee", "name");
+		Specification<ActionDetails> isDeletedEmpSpc = generalSpecificationActionDetails.foreignKeyDoubleObjectBooleanSpecification(false, "action", "employee", "isDeleted");
 		Specification<ActionDetails> pendingSpc = generalSpecificationActionDetails.stringEqualSpecification("Pending", "status");
 		Specification<ActionDetails> errorSpc = generalSpecificationActionDetails.stringSpecification("Error", "status");
 		Specification<ActionDetails> statusSpc = generalSpecificationActionDetails.stringSpecification(status, "status");
 		Specification<ActionDetails> deviceSpc = generalSpecificationActionDetails.foreignKeyStringSpecification(device, "device", "name");
 		Specification<ActionDetails> orgSpc = generalSpecificationActionDetails.foreignKeyTripleSpecification(orgName, "action", "employee", "organization","name");
 		
-    	Page<ActionDetails> page = actionDetailsRepository.findAll(dateSpec.and(empIdSpc).and(employeeNameSpc).and(deviceSpc).and(statusSpc).and(orgSpc).and(pendingSpc.or(errorSpc)), pageable);
+    	Page<ActionDetails> page = actionDetailsRepository.findAll(dateSpec.and(empIdSpc).and(employeeNameSpc).and(deviceSpc).and(statusSpc).and(isDeletedEmpSpc).and(orgSpc).and(pendingSpc.or(errorSpc)), pageable);
 		return page;
 	
 	

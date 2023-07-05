@@ -241,6 +241,9 @@ public class ExcelEmployeeImport {
 					emp.setPermanentAddress(employee.getPermanentAddress());
 					emp.setResidentialAddress(employee.getResidentialAddress());
 					emp.setJoinDate(employee.getJoinDate());
+					emp.setDeleted(false);
+					emp.setSync(false);
+					emp.setFaceSync(false);
 					employeeList.add(emp);
 				}
 				
@@ -293,7 +296,7 @@ public class ExcelEmployeeImport {
 
 					 if (cellIndex == NumberConstants.ZERO) {
 						String value = getStringValue(currentCell);
-						Employee employee = employeeRepository.findByEmpIdCustom(value.trim());
+						Employee employee = employeeRepository.findByEmpIdAndIsDeletedFalse(value.trim());
 						if (null!=employee) {
 							employee.setDeleted(true);
 							employeeRepository.save(employee);

@@ -71,7 +71,7 @@ public class EmployeeObjectMap {
 	}
 	
 	public Map<String, Employee> getEmployeeByEmpId(Organization organization){
-		List<Employee> employeeList = employeeRepository.findAllByIsDeletedFalseAndOrganization(organization);
+		List<Employee> employeeList = employeeRepository.findAllByOrganization(organization);
 		Map<String, Employee> employeeMap = new HashMap<String, Employee>();
 		
 		for(Employee employee: employeeList ) {

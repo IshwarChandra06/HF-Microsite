@@ -13,7 +13,7 @@ public interface TransactionRepository extends DataTablesRepository<Transaction,
 
 	@Query("SELECT tr FROM com.eikona.tech.entity.Transaction as tr where tr.punchDate >=:sDate and tr.punchDate <=:eDate and tr.organization =:organization"
 			+ " and tr.empId is not null order by tr.punchDateStr asc, tr.punchTimeStr asc")
-	List<Transaction> getTransactionData(Date sDate, Date eDate, String organization);
+	List<Transaction> getTransactionDataCustom(Date sDate, Date eDate, String organization);
 
 	List<Transaction> findByPunchDateStrAndOrganization(String currDate, String currOrg);
 
@@ -33,7 +33,14 @@ public interface TransactionRepository extends DataTablesRepository<Transaction,
 			+ "where tr.punchDateStr =:dateStr and tr.deviceName=:device and tr.name='Unregistered' GROUP BY tr.organization")
 	Long findUnregisterCountByDateAndDeviceCustom(String dateStr, String device);
 
-//	@Query("SELECT tr FROM com.eikona.tech.entity.Transaction as tr where tr.punchDate =:date and tr.empId=:personId")
-//	List<Transaction> findByPunchDateAndEmpIdCustom(Date date, String personId);
+
+	@Query("SELECT tr FROM com.eikona.tech.entity.Transaction as tr where tr.punchDate =:date and tr.empId=:personId and tr.serialNo=:deviceKey")
+	List<Transaction> findByPunchDateAndEmpIdCustom(Date date, String personId, String deviceKey);
+
+	@Query("SELECT tr FROM com.eikona.tech.entity.Transaction as tr where tr.punchDate =:date and tr.name=:name and tr.serialNo=:deviceKey")  
+	List<Transaction> findByPunchDateAndNameCustom(Date date, String name, String deviceKey);
+
+	List<Transaction> findByOrganization(String name);
+
 
 }

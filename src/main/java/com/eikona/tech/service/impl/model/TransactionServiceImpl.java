@@ -20,6 +20,7 @@ import com.eikona.tech.constants.ApplicationConstants;
 import com.eikona.tech.constants.AreaConstants;
 import com.eikona.tech.constants.NumberConstants;
 import com.eikona.tech.constants.TransactionConstants;
+import com.eikona.tech.dto.EventRequestDto;
 import com.eikona.tech.dto.PaginationDto;
 import com.eikona.tech.entity.Transaction;
 import com.eikona.tech.repository.TransactionRepository;
@@ -262,5 +263,51 @@ public class TransactionServiceImpl implements TransactionService {
 				ApplicationConstants.NAME);
 		Page<Transaction> page = transactionRepository.findAll(orgSpec.and(nameSpec), pageable);
 		return page;
+	}
+
+	@Override
+	public Page<Transaction> searchByField(EventRequestDto eventDto, String orgName) {
+		Date startDate = null;
+		Date endDate = null;
+		SimpleDateFormat format = new SimpleDateFormat(ApplicationConstants.DATE_FORMAT_OF_US);
+		try {
+			if(eventDto.getDate().isEmpty()) {
+				endDate = calendarUtil.getConvertedDate(format.parse(format.format(new Date())),
+						NumberConstants.TWENTY_THREE, NumberConstants.FIFTY_NINE, NumberConstants.FIFTY_NINE);
+				startDate = calendarUtil.getConvertedDate(format.parse(format.format(new Date())), 0, 0, 0);
+			}else {
+				endDate = calendarUtil.getConvertedDate(format.parse(eventDto.getDate()),
+						NumberConstants.TWENTY_THREE, NumberConstants.FIFTY_NINE, NumberConstants.FIFTY_NINE);
+				startDate = calendarUtil.getConvertedDate(format.parse(eventDto.getDate()), 0, 0, 0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String sortOrder=eventDto.getSortOrder();
+		String sortField=eventDto.getSortField();
+		if (null == eventDto.getSortOrder() || eventDto.getSortOrder().isEmpty()) {
+			sortOrder = "asc";
+		}
+		if (null == eventDto.getSortField() || eventDto.getSortField().isEmpty()) {
+			sortField = "id";
+		}
+		Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
+				: Sort.by(sortField).descending();
+
+		Pageable pageable = PageRequest.of(eventDto.getPageNo() - 1, eventDto.getPageSize(), sort);
+		
+		Specification<Transaction> dateSpec = generalSpecification.dateSpecification(startDate, endDate,TransactionConstants.PUNCH_DATE);
+		Specification<Transaction> empIdSpec = generalSpecification.stringSpecification(eventDto.getEmpId(), TransactionConstants.EMP_ID);
+		Specification<Transaction> companySpec = generalSpecification.stringSpecification(eventDto.getCompany(), "contractor");
+		Specification<Transaction> empNameSpec = generalSpecification.stringSpecification(eventDto.getName(), ApplicationConstants.NAME);
+		Specification<Transaction> devSpec = generalSpecification.stringEqualSpecification(eventDto.getDeviceName(), TransactionConstants.DEVICE_NAME);
+		Specification<Transaction> deptSpec = generalSpecification.stringSpecification(eventDto.getDepartment(),TransactionConstants.DEPARTMENT);
+		Specification<Transaction> desiSpec = generalSpecification.stringSpecification(eventDto.getDesignation(),TransactionConstants.DESIGNATION);
+		Specification<Transaction> orgSpec = generalSpecification.stringSpecification(orgName,AreaConstants.ORGANIZATION);
+		
+		Page<Transaction> allTransaction = transactionRepository.findAll(dateSpec.and(empIdSpec).and(empNameSpec).and(devSpec).and(desiSpec).and(orgSpec).and(deptSpec).and(companySpec), pageable);
+		
+		
+		return allTransaction;
 	}
 }
